@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Lenis smooth-scroll: required CSS so internal scrollers behave correctly */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(34, 211, 238, 0.10), transparent 60%),
+      radial-gradient(1000px 500px at 100% 10%, rgba(139, 92, 246, 0.10), transparent 60%),
+      #05060a;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: rgba(34, 211, 238, 0.35);
+    color: #fff;
+  }
+  /* Custom scrollbar */
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #22d3ee55, #8b5cf655);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-xl border border-white/10 shadow-glass;
+  }
+  .neon-border {
+    position: relative;
+  }
+  .neon-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, #22d3ee, #8b5cf6, #f472b6);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, #22d3ee 0%, #8b5cf6 50%, #f472b6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  }
+}
+
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+}
+
+/* Markdown body styles for chat */
+.md-body {
+  @apply text-ink leading-relaxed;
+}
+.md-body p {
+  @apply my-2;
+}
+.md-body h1,
+.md-body h2,
+.md-body h3 {
+  @apply font-display font-semibold mt-4 mb-2;
+}
+.md-body ul {
+  @apply list-disc ml-5 my-2;
+}
+.md-body ol {
+  @apply list-decimal ml-5 my-2;
+}
+.md-body code:not(pre code) {
+  @apply px-1.5 py-0.5 rounded bg-white/10 text-neon-cyan font-mono text-[0.85em];
+}
+.md-body pre {
+  @apply rounded-xl overflow-hidden my-3 text-sm;
+}
+.md-body a {
+  @apply text-neon-cyan underline-offset-4 hover:underline;
+}
