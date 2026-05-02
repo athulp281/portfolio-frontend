@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Athion · Frontend
 
 AI-native developer portfolio for Athul P. React (Vite) + Tailwind + Zustand + Framer Motion + React Three Fiber, talking to the Express/RAG backend in `../backend`.
@@ -51,3 +52,6 @@ src/
 ```
 
 See `CLAUDE.md` for the deeper architecture notes.
+=======
+# portfolio-frontend
+>>>>>>> 87b1e06b0159e4a1eded2ec4e9bd429821e51c1b
