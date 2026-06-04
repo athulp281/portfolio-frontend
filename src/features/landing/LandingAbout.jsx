@@ -30,7 +30,7 @@ const STATS = [
 export function LandingAbout() {
   return (
     <section id="intro" className="relative w-full py-24 md:py-36">
-      <SectionBackdrop src="/profile6.png" position="right" opacity={0.16} />
+      <SectionBackdrop src="/profile6.png" position="right" opacity={0.24} />
       <VelocityMarquee
         items={KEYWORDS}
         baseVelocity={2.5}

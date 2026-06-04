@@ -67,7 +67,7 @@ export function LandingServices() {
 
   return (
     <section id="skills" className="relative w-full py-28 md:py-40">
-      <SectionBackdrop src="/profile4.png" position="left" opacity={0.14} />
+      <SectionBackdrop src="/profile4.png" position="left" opacity={0.2} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
         {/* LEFT — pinned display. Heights are bounded (svh-based) so the whole
             block fits on screen while sticky. */}

@@ -21,8 +21,8 @@ const POS = {
 export function SectionBackdrop({
   src,
   position = "right",
-  size = "44vw",
-  opacity = 0.16,
+  size = "46vw",
+  opacity = 0.24,
 }) {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -53,9 +53,9 @@ export function SectionBackdrop({
           opacity: isMobile ? opacity * 0.7 : opacity,
           filter: "grayscale(1) contrast(1.08)",
           WebkitMaskImage:
-            "radial-gradient(70% 70% at 50% 45%, #000 50%, transparent 85%)",
+            "radial-gradient(78% 78% at 50% 45%, #000 62%, transparent 92%)",
           maskImage:
-            "radial-gradient(70% 70% at 50% 45%, #000 50%, transparent 85%)",
+            "radial-gradient(78% 78% at 50% 45%, #000 62%, transparent 92%)",
         }}
         animate={isMobile ? undefined : { y: [-16, 16, -16], scale: [1, 1.03, 1] }}
         transition={

@@ -37,7 +37,7 @@ export function LandingWork() {
       onMouseMove={onMove}
       className="relative w-full py-28 md:py-40"
     >
-      <SectionBackdrop src="/profile3.png" position="right" opacity={0.16} />
+      <SectionBackdrop src="/profile3.png" position="right" opacity={0.24} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
         <Reveal className="flex items-end justify-between gap-6 mb-14 md:mb-20">
           <div>
