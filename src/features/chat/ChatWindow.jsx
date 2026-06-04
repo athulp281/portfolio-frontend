@@ -91,17 +91,13 @@ export function ChatWindow() {
   };
 
   return (
-    // Explicit height — NOT `h-full`. `h-full` collapses to 0 inside Safari's
-    // flex-grown `<main flex-1>` (the documented "everything is black" bug),
-    // so we hard-set the height to the keyboard-aware visual viewport
-    // (`--app-vh`, kept in sync by useVisualViewportHeight) and fall back to
-    // `100dvh`. ChatLayout additionally translateY's the shell by the
-    // viewport's offsetTop so the bottom-docked input follows the iOS keyboard
-    // with no black dead-space below it.
-    <div
-      className="relative w-full overflow-hidden"
-      style={{ height: "var(--app-vh, 100dvh)" }}
-    >
+    // Static full-height surface (`100dvh`, NOT `h-full` — the latter
+    // collapses to 0 inside Safari's flex-grown `<main flex-1>`, the
+    // documented "everything is black" bug). The shell never shrinks for the
+    // keyboard; instead the scroller and input dock below are inset by `--kb`
+    // (the keyboard height) so the input floats above the iOS keyboard while
+    // the full-height background keeps any black dead-band impossible.
+    <div className="relative h-[100dvh] w-full overflow-hidden">
       {/* Bg sits at z-0, all chat content at z-10 so the dark radial
           can't end up painted on top of the messages. */}
       <ChatBackgroundGlow />
@@ -130,7 +126,11 @@ export function ChatWindow() {
             <div
               ref={scrollerRef}
               data-lenis-prevent
-              className="absolute inset-0 overflow-y-auto"
+              className="absolute left-0 right-0 top-0 overflow-y-auto"
+              // Bottom rises with the keyboard so the scroll area is always
+              // the visible region above it (--kb = keyboard height, 0 when
+              // closed).
+              style={{ bottom: "var(--kb, 0px)" }}
             >
               <div className="mx-auto max-w-2xl lg:max-w-3xl w-full px-4 md:px-6 pt-20 md:pt-24 pb-44 md:pb-48 space-y-6 md:space-y-7">
                 <AnimatePresence initial={false}>
@@ -153,7 +153,10 @@ export function ChatWindow() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
                   transition={{ duration: 0.2, ease: easing }}
-                  className="absolute left-1/2 -translate-x-1/2 bottom-32 md:bottom-36 z-30 px-3 py-1.5 rounded-full bg-bg/80 backdrop-blur-md border border-white/10 text-xs text-ink-dim hover:text-ink hover:border-cyan-300/30 transition-colors shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]"
+                  className="absolute left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full bg-bg/80 backdrop-blur-md border border-white/10 text-xs text-ink-dim hover:text-ink hover:border-cyan-300/30 transition-colors shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]"
+                  // Sits above the input dock; both shift up by --kb when the
+                  // keyboard is open.
+                  style={{ bottom: "calc(8rem + var(--kb, 0px))" }}
                 >
                   Jump to latest ↓
                 </motion.button>
@@ -167,7 +170,10 @@ export function ChatWindow() {
               initial={{ y: 60, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.7, ease: easing, delay: 0.12 }}
-              className="absolute bottom-0 inset-x-0 z-20 pointer-events-none"
+              className="absolute inset-x-0 z-20 pointer-events-none"
+              // Floats just above the iOS keyboard (--kb), flush to the
+              // bottom when it's closed.
+              style={{ bottom: "var(--kb, 0px)" }}
             >
               <div className="h-16 md:h-20 bg-gradient-to-t from-bg via-bg/90 to-transparent" />
               <div

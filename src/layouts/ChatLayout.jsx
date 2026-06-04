@@ -2,7 +2,7 @@ import { Outlet, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useChatStore } from "@/store";
-import { useVisualViewportHeight } from "@/hooks/useVisualViewportHeight";
+import { useKeyboardInset } from "@/hooks/useKeyboardInset";
 
 export function ChatLayout() {
   const newChat = useChatStore((s) => s.newChat);
@@ -10,26 +10,19 @@ export function ChatLayout() {
     s.messages.some((m) => m.role === "user"),
   );
 
-  // Keeps --app-vh / --app-vt in sync with the keyboard-aware visual viewport
-  // so the shell below can shrink and follow the iOS keyboard.
-  useVisualViewportHeight();
+  // Publishes the iOS keyboard height as --kb so the input dock can float
+  // above it. The shell itself stays full-height (see below).
+  useKeyboardInset();
 
   return (
-    // The chat UI is `position: fixed`, so on the /chat route the document
-    // body has no in-flow content to scroll — iOS therefore can't pan the
-    // page when the keyboard opens (no black dead-space). Its height tracks
-    // the keyboard-aware *visual* viewport via `--app-vh` (kept in sync by
-    // useVisualViewportHeight), so opening the keyboard simply shrinks the
-    // shell from the bottom and the docked input rides up above it.
-    //
-    // NOTE: we deliberately do NOT translateY by visualViewport.offsetTop —
-    // a fixed top:0 element already sits at the visual-viewport top, and
-    // reacting to offsetTop fought iOS's own focus-scroll, producing a
-    // jump-to-top-then-settle flicker.
-    <div
-      className="fixed inset-x-0 top-0 flex flex-col bg-bg overflow-hidden"
-      style={{ height: "var(--app-vh, 100dvh)" }}
-    >
+    // The chat UI is a STATIC full-height fixed shell (`inset-0`). We
+    // deliberately do NOT shrink or translate it when the keyboard opens —
+    // doing so made iOS pan/scroll the page and produced either a flicker or
+    // a black dead-band below the input. Because the shell always covers the
+    // whole screen, a black band is impossible; the iOS keyboard simply
+    // overlays its bottom, and only the input dock is lifted by `--kb` to
+    // float just above the keyboard (see ChatWindow).
+    <div className="fixed inset-0 flex flex-col bg-bg overflow-hidden">
       <header className="shrink-0 absolute top-0 inset-x-0 z-30">
         <div className="mx-auto max-w-5xl px-3 md:px-6 py-3 flex items-center justify-between gap-2">
           <Link

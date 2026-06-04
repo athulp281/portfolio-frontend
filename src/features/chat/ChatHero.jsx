@@ -96,6 +96,10 @@ export function ChatHero({ onSubmit, suggestions, busy, brand = "Athion AI" }) {
       exit={{ opacity: 0, y: -40, transition: { duration: 0.45, ease: easing } }}
       transition={{ duration: 0.6, ease: easing }}
       className="relative z-10 h-full w-full flex flex-col items-center justify-center px-4 md:px-8 py-10 overflow-hidden"
+      // Extra bottom padding equal to the iOS keyboard height (--kb) so the
+      // vertically-centered hero (and its input) re-centers in the visible
+      // area above the keyboard instead of hiding behind it.
+      style={{ paddingBottom: "calc(2.5rem + var(--kb, 0px))" }}
     >
       <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center">
         {/* Brand pill — drops from top */}
