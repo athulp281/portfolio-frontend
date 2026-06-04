@@ -153,7 +153,7 @@ export function ChatWindow() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
                   transition={{ duration: 0.2, ease: easing }}
-                  className="absolute left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full bg-bg/80 backdrop-blur-md border border-white/10 text-xs text-ink-dim hover:text-ink hover:border-cyan-300/30 transition-colors shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]"
+                  className="absolute left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full bg-bg/80 backdrop-blur-md border border-line/10 text-xs text-ink-dim hover:text-ink hover:border-cyan-300/30 transition-colors shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]"
                   // Sits above the input dock; both shift up by --kb when the
                   // keyboard is open.
                   style={{ bottom: "calc(8rem + var(--kb, 0px))" }}

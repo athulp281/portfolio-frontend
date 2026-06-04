@@ -47,7 +47,7 @@ export function SuggestionChips({ items, onPick, disabled, variant = "default" }
           whileTap={{ scale: 0.97 }}
           className={cn(
             "inline-flex items-center gap-1 md:gap-1.5 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed max-w-full",
-            "border border-white/10 bg-white/[0.04] backdrop-blur-md text-ink-dim",
+            "border border-line/10 bg-line/[0.04] backdrop-blur-md text-ink-dim",
             "hover:border-cyan-300/55 hover:bg-cyan-300/[0.06] hover:text-ink",
             "hover:shadow-[0_0_18px_rgba(56,180,255,0.28)]",
             isHero

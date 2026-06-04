@@ -1,17 +1,17 @@
-import { Hero } from "@/features/portfolio/Hero";
-import { Intro } from "@/features/portfolio/Intro";
-import { Skills } from "@/features/portfolio/Skills";
-import { Projects } from "@/features/portfolio/Projects";
-import { CTA } from "@/features/portfolio/CTA";
+import { LandingHero } from "@/features/landing/LandingHero";
+import { LandingAbout } from "@/features/landing/LandingAbout";
+import { LandingServices } from "@/features/landing/LandingServices";
+import { LandingWork } from "@/features/landing/LandingWork";
+import { LandingContact } from "@/features/landing/LandingContact";
 
 export default function LandingPage() {
   return (
     <>
-      <Hero />
-      <Intro />
-      <Skills />
-      <Projects />
-      <CTA />
+      <LandingHero />
+      <LandingAbout />
+      <LandingServices />
+      <LandingWork />
+      <LandingContact />
     </>
   );
 }

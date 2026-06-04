@@ -1,6 +1,8 @@
 import { Outlet, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Sun, Moon } from "lucide-react";
+import { Magnetic } from "@/components/common/Magnetic";
+import { useThemeStore } from "@/store";
 
 export function PublicLayout() {
   return (
@@ -45,10 +47,14 @@ const HEADER_OFFSET = 88;
  *   projects: normal flow with content at top → target 0 (just header
  *             offset)
  */
+// The landing sections are now normal-flow (no pinned stages), so every
+// anchor just snaps the section top under the fixed header — targetProgress 0.
 const NAV_LINKS = [
-  { href: "#intro",    label: "About",  targetProgress: 0.50 },
-  { href: "#skills",   label: "Skills", targetProgress: 0.58 },
-  { href: "#projects", label: "Work",   targetProgress: 0 },
+  { href: "#hero",    label: "Home",    targetProgress: 0 },
+  { href: "#intro",   label: "About",   targetProgress: 0 },
+  { href: "#skills",  label: "Skills",  targetProgress: 0 },
+  { href: "#work",    label: "Work",    targetProgress: 0 },
+  { href: "#contact", label: "Contact", targetProgress: 0 },
 ];
 
 function scrollToSection(id, targetProgress = 0) {
@@ -103,17 +109,16 @@ function Header() {
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="fixed top-0 inset-x-0 z-50"
     >
-      <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+      <div className="relative mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+        {/* Logo (left) */}
         <Link to="/" className="flex items-center gap-2.5 group">
           <span className="relative inline-flex shrink-0">
-            {/* Soft neon halo behind the avatar */}
             <span
               aria-hidden
               className="absolute inset-0 rounded-full blur-md opacity-70 bg-gradient-to-br from-neon-cyan to-neon-violet"
             />
-            {/* Gradient ring + image */}
             <span className="relative size-9 rounded-full p-[2px] bg-gradient-to-br from-neon-cyan via-neon-violet to-neon-pink shadow-neon">
-              <span className="block size-full rounded-full overflow-hidden bg-bg ring-1 ring-white/10">
+              <span className="block size-full rounded-full overflow-hidden bg-bg ring-1 ring-line/10">
                 <img
                   src="/profile5.png"
                   alt="Athul P"
@@ -122,45 +127,67 @@ function Header() {
                 />
               </span>
             </span>
-            {/* Online status dot */}
-            <span
-              aria-hidden
-              className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-neon-cyan ring-2 ring-bg shadow-[0_0_8px_rgba(34,211,238,0.9)]"
-            />
           </span>
           <span className="font-display tracking-tight text-lg">
             Athion<span className="text-gradient">.ai</span>
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-ink-dim">
+        {/* Centered pill nav */}
+        <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 rounded-full glass px-2 py-1.5">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavClick(e, link)}
-              className="hover:text-ink transition"
+              data-cursor="hover"
+              className="px-4 py-1.5 rounded-full text-sm text-ink-dim hover:text-ink hover:bg-line/5 transition-colors"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <Link
-          to="/chat"
-          className="group relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-ink glass neon-border hover:shadow-neon transition-shadow"
-        >
-          <Sparkles className="size-4 text-neon-cyan" />
-          Talk with my AI
-        </Link>
+        {/* Right cluster: theme toggle + round CTA */}
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Magnetic strength={0.4}>
+            <Link
+              to="/chat"
+              aria-label="Talk with my AI"
+              data-cursor="hover"
+              className="group grid place-items-center size-11 rounded-full glass neon-border hover:shadow-neon transition-shadow"
+            >
+              <Sparkles className="size-4 text-neon-cyan transition-transform duration-500 group-hover:rotate-12" />
+            </Link>
+          </Magnetic>
+        </div>
       </div>
     </motion.header>
   );
 }
 
+function ThemeToggle() {
+  const theme = useThemeStore((s) => s.theme);
+  const toggleTheme = useThemeStore((s) => s.toggleTheme);
+  const Icon = theme === "dark" ? Sun : Moon;
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      data-cursor="hover"
+      className="group grid place-items-center size-11 rounded-full glass hover:border-neon-cyan/40 transition-colors"
+    >
+      <Icon className="size-4 text-ink-dim transition-transform duration-500 group-hover:rotate-45" />
+    </button>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/5 mt-32">
+    <footer className="relative z-10 border-t border-line/5 mt-32">
       <div className="mx-auto max-w-7xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-ink-mute">
         <p>© {new Date().getFullYear()} Athul P · Built with Athion AI</p>
         <p className="font-mono text-xs">v0.1 · cinematic mode</p>

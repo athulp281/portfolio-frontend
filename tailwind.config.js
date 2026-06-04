@@ -5,16 +5,22 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Theme tokens are driven by CSS variables (see src/index.css) so the
+        // whole palette flips between dark/light. RGB-channel syntax keeps
+        // Tailwind's /opacity modifiers (e.g. bg-bg/40, text-ink/20) working.
         bg: {
-          DEFAULT: "#05060a",
-          soft: "#0a0d14",
-          panel: "#0e1220",
+          DEFAULT: "rgb(var(--bg) / <alpha-value>)",
+          soft: "rgb(var(--bg-soft) / <alpha-value>)",
+          panel: "rgb(var(--bg-panel) / <alpha-value>)",
         },
         ink: {
-          DEFAULT: "#e6e9f2",
-          dim: "#9aa3b8",
-          mute: "#5b647a",
+          DEFAULT: "rgb(var(--ink) / <alpha-value>)",
+          dim: "rgb(var(--ink-dim) / <alpha-value>)",
+          mute: "rgb(var(--ink-mute) / <alpha-value>)",
         },
+        // Foreground hairlines / subtle fills (white in dark, near-black in
+        // light). Use as border-line/15, bg-line/5, etc.
+        line: "rgb(var(--line) / <alpha-value>)",
         neon: {
           cyan: "#22d3ee",
           violet: "#8b5cf6",

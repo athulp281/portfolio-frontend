@@ -58,8 +58,8 @@ export function ChatInput({
     <div
       className={cn(
         "group relative flex gap-2 items-center",
-        "border border-white/10 backdrop-blur-2xl",
-        "bg-white/[0.04] shadow-[0_18px_48px_-18px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.06)]",
+        "border border-line/10 backdrop-blur-2xl",
+        "bg-line/[0.04] shadow-[0_18px_48px_-18px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.06)]",
         "transition-all duration-300",
         "hover:border-cyan-300/40 hover:shadow-[0_18px_48px_-18px_rgba(0,0,0,0.6),0_0_28px_rgba(56,180,255,0.18),inset_0_1px_0_rgba(255,255,255,0.06)]",
         "focus-within:border-cyan-300/60 focus-within:shadow-[0_18px_48px_-18px_rgba(0,0,0,0.6),0_0_36px_rgba(56,180,255,0.32),inset_0_1px_0_rgba(255,255,255,0.08)]",
@@ -103,7 +103,7 @@ export function ChatInput({
 
       {isHero && !busy && (
         <span
-          className="hidden md:inline-flex shrink-0 items-center gap-1.5 px-2.5 h-12 rounded-md border border-white/10 bg-white/5 text-[10px] font-mono uppercase tracking-[0.25em] text-ink-mute"
+          className="hidden md:inline-flex shrink-0 items-center gap-1.5 px-2.5 h-12 rounded-md border border-line/10 bg-line/5 text-[10px] font-mono uppercase tracking-[0.25em] text-ink-mute"
           aria-hidden
         >
           <span className="size-1 rounded-full bg-cyan-300 shadow-[0_0_6px_rgba(56,180,255,0.7)]" />
@@ -117,7 +117,7 @@ export function ChatInput({
           animate={{ scale: 1, opacity: 1 }}
           onClick={onCancel}
           className={cn(
-            "shrink-0 grid place-items-center bg-white/10 border border-white/15 hover:bg-white/15 transition",
+            "shrink-0 grid place-items-center bg-line/10 border border-line/15 hover:bg-line/15 transition",
             isHero
               ? "h-11 md:h-12 w-11 md:w-12 rounded-xl"
               : "size-10 rounded-full",

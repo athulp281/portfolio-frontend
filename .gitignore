@@ -70,3 +70,8 @@ bun.lockb
 # Misc
 *.tsbuildinfo
 .history
+
+# Design reference material (third-party template screenshots/recording — not app assets)
+public/1.png
+public/2.png
+public/herodemo.mp4

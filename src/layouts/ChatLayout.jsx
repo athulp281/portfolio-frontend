@@ -27,7 +27,7 @@ export function ChatLayout() {
         <div className="mx-auto max-w-5xl px-3 md:px-6 py-3 flex items-center justify-between gap-2">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs md:text-sm text-ink-dim hover:text-ink glass border-white/10 transition"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs md:text-sm text-ink-dim hover:text-ink glass border-line/10 transition"
           >
             <ArrowLeft className="size-4" />
             <span className="hidden sm:inline">Back</span>
@@ -47,7 +47,7 @@ export function ChatLayout() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={newChat}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-sm text-ink glass border-white/10 hover:border-cyan-300/55 hover:shadow-[0_0_18px_rgba(56,180,255,0.3)] transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs md:text-sm text-ink glass border-line/10 hover:border-cyan-300/55 hover:shadow-[0_0_18px_rgba(56,180,255,0.3)] transition"
                   aria-label="Start a new chat"
                 >
                   <Plus className="size-3.5 text-cyan-300" />
@@ -56,7 +56,7 @@ export function ChatLayout() {
               )}
             </AnimatePresence>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border-white/10">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border-line/10">
               <span className="size-2 rounded-full bg-neon-lime shadow-[0_0_12px_#a3e635] animate-pulse" />
               <span className="text-[10px] md:text-xs font-mono text-ink-dim">
                 athion.ai · online

@@ -21,9 +21,35 @@ html.lenis body {
 }
 
 @layer base {
-  :root {
+  /* === Theme tokens (RGB channels for Tailwind's <alpha-value>) =========
+     Dark is the default on :root; `html.light` overrides with higher
+     specificity so it always wins regardless of source order. */
+  :root,
+  html.dark {
     color-scheme: dark;
+    --bg: 5 6 10;
+    --bg-soft: 10 13 20;
+    --bg-panel: 14 18 32;
+    --ink: 230 233 242;
+    --ink-dim: 154 163 184;
+    --ink-mute: 91 100 122;
+    --line: 255 255 255; /* hairlines/fills tint white on dark */
+    --body-tint-a: rgba(34, 211, 238, 0.1);
+    --body-tint-b: rgba(139, 92, 246, 0.1);
   }
+  html.light {
+    color-scheme: light;
+    --bg: 244 246 251;
+    --bg-soft: 255 255 255;
+    --bg-panel: 236 239 246;
+    --ink: 16 20 32;
+    --ink-dim: 71 81 102;
+    --ink-mute: 120 130 150;
+    --line: 16 20 32; /* hairlines/fills tint near-black on light */
+    --body-tint-a: rgba(34, 211, 238, 0.14);
+    --body-tint-b: rgba(139, 92, 246, 0.14);
+  }
+
   html,
   body,
   #root {
@@ -31,9 +57,9 @@ html.lenis body {
   }
   body {
     background:
-      radial-gradient(1200px 600px at 20% -10%, rgba(34, 211, 238, 0.10), transparent 60%),
-      radial-gradient(1000px 500px at 100% 10%, rgba(139, 92, 246, 0.10), transparent 60%),
-      #05060a;
+      radial-gradient(1200px 600px at 20% -10%, var(--body-tint-a), transparent 60%),
+      radial-gradient(1000px 500px at 100% 10%, var(--body-tint-b), transparent 60%),
+      rgb(var(--bg));
     overflow-x: hidden;
   }
   ::selection {
@@ -58,7 +84,9 @@ html.lenis body {
 
 @layer components {
   .glass {
-    @apply bg-white/[0.04] backdrop-blur-xl border border-white/10 shadow-glass;
+    @apply backdrop-blur-xl border shadow-glass;
+    background-color: rgb(var(--line) / 0.04);
+    border-color: rgb(var(--line) / 0.1);
   }
   .neon-border {
     position: relative;

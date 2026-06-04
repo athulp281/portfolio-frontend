@@ -31,13 +31,13 @@ function CodeBlock({ inline, className, children, ...props }) {
   };
 
   return (
-    <div className="group relative my-3 rounded-xl overflow-hidden border border-white/10 bg-black/60">
-      <div className="flex items-center justify-between px-3 py-1.5 text-[10px] uppercase tracking-widest text-ink-mute border-b border-white/10 bg-white/5">
+    <div className="group relative my-3 rounded-xl overflow-hidden border border-line/10 bg-black/60">
+      <div className="flex items-center justify-between px-3 py-1.5 text-[10px] uppercase tracking-widest text-ink-mute border-b border-line/10 bg-line/5">
         <span className="font-mono">{match?.[1] || "code"}</span>
         <button
           onClick={onCopy}
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-ink-dim hover:text-ink hover:bg-white/10 transition",
+            "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-ink-dim hover:text-ink hover:bg-line/10 transition",
           )}
         >
           {copied ? <Check className="size-3" /> : <Copy className="size-3" />}

@@ -45,7 +45,7 @@ function UserMessage({ message, index }) {
         className={cn(
           "max-w-[85%] md:max-w-[70%] rounded-2xl rounded-tr-md px-4 py-2.5 leading-relaxed",
           "bg-gradient-to-br from-cyan-400/[0.14] to-indigo-500/[0.18]",
-          "border border-white/10 text-ink",
+          "border border-line/10 text-ink",
           "shadow-[0_4px_20px_-8px_rgba(56,180,255,0.35)]",
         )}
       >
@@ -96,7 +96,7 @@ function AssistantMessage({ message, index }) {
             "shadow-[0_4px_14px_-4px_rgba(56,180,255,0.55)]",
           )}
         >
-          <span className="block size-full rounded-full overflow-hidden bg-bg ring-1 ring-white/10">
+          <span className="block size-full rounded-full overflow-hidden bg-bg ring-1 ring-line/10">
             <img
               src="/profile5.png"
               alt="Athion AI"
@@ -214,7 +214,7 @@ function ActionBtn({ children, label, onClick, active }) {
       className={cn(
         "inline-flex items-center justify-center size-7 rounded-md",
         "text-ink-mute hover:text-ink",
-        "hover:bg-white/[0.06] active:bg-white/[0.1] transition-colors",
+        "hover:bg-line/[0.06] active:bg-line/[0.1] transition-colors",
         active && "text-emerald-300",
       )}
       data-cursor="hover"
