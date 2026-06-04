@@ -88,6 +88,43 @@ export function ChatHero({ onSubmit, suggestions, busy, brand = "Athion AI" }) {
       transition={{ duration: 0.6, ease: easing }}
       className="relative z-10 h-full w-full flex flex-col items-center justify-center px-5 md:px-8 py-10 overflow-hidden"
     >
+      {/* Background portrait — dimmed + scrimmed so the headline/input stay
+          readable in both themes. */}
+      <div aria-hidden className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <motion.img
+          src="/C1E0AC65-0655-4204-9DF6-BE916A4A9DBB.png"
+          alt=""
+          draggable={false}
+          initial={{ scale: 1.04, opacity: 0 }}
+          // NOTE: framer's animate opacity sets an inline style that overrides
+          // any Tailwind `opacity-[..]` class — so the final opacity is set
+          // HERE (change this number to tune visibility).
+          animate={{ scale: 1, opacity: 0.3 }}
+          transition={{ duration: 1.4, ease: easing }}
+          // object-contain zooms out so the whole portrait (full figure + face)
+          // is visible; the radial mask feathers its edges so it blends into
+          // the background colour instead of looking like a pasted photo.
+          className="absolute inset-0 h-full w-full object-contain"
+          style={{
+            objectPosition: "center 28%",
+            filter: "contrast(1.04)",
+            WebkitMaskImage:
+              "radial-gradient(60% 68% at 50% 40%, #000 32%, transparent 80%)",
+            maskImage:
+              "radial-gradient(60% 68% at 50% 40%, #000 32%, transparent 80%)",
+          }}
+        />
+        {/* Soft bottom fade only — keeps the input/chips readable without
+            washing out the now-blended portrait. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent 45%, rgb(var(--bg) / 0.55) 100%)",
+          }}
+        />
+      </div>
+
       <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
         {/* Status label */}
         <motion.div

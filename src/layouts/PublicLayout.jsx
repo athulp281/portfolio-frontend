@@ -1,8 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, Sun, Moon } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Magnetic } from "@/components/common/Magnetic";
-import { useThemeStore } from "@/store";
 
 export function PublicLayout() {
   return (
@@ -148,40 +147,19 @@ function Header() {
           ))}
         </nav>
 
-        {/* Right cluster: theme toggle + round CTA */}
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <Magnetic strength={0.4}>
-            <Link
-              to="/chat"
-              aria-label="Talk with my AI"
-              data-cursor="hover"
-              className="group grid place-items-center size-11 rounded-full glass neon-border hover:shadow-neon transition-shadow"
-            >
-              <Sparkles className="size-4 text-neon-cyan transition-transform duration-500 group-hover:rotate-12" />
-            </Link>
-          </Magnetic>
-        </div>
+        {/* Round CTA (right) */}
+        <Magnetic strength={0.4}>
+          <Link
+            to="/chat"
+            aria-label="Talk with my AI"
+            data-cursor="hover"
+            className="group grid place-items-center size-11 rounded-full glass neon-border hover:shadow-neon transition-shadow"
+          >
+            <Sparkles className="size-4 text-neon-cyan transition-transform duration-500 group-hover:rotate-12" />
+          </Link>
+        </Magnetic>
       </div>
     </motion.header>
-  );
-}
-
-function ThemeToggle() {
-  const theme = useThemeStore((s) => s.theme);
-  const toggleTheme = useThemeStore((s) => s.toggleTheme);
-  const Icon = theme === "dark" ? Sun : Moon;
-
-  return (
-    <button
-      type="button"
-      onClick={toggleTheme}
-      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      data-cursor="hover"
-      className="group grid place-items-center size-11 rounded-full glass hover:border-neon-cyan/40 transition-colors"
-    >
-      <Icon className="size-4 text-ink-dim transition-transform duration-500 group-hover:rotate-45" />
-    </button>
   );
 }
 
