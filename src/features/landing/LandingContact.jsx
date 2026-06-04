@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/common/Magnetic";
 import { Reveal, RevealText } from "@/components/common/Reveal";
+import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 import { useProjectStore } from "@/store";
 
 /**
@@ -20,6 +21,7 @@ export function LandingContact() {
 
   return (
     <section id="contact" className="relative w-full py-28 md:py-40">
+      <SectionBackdrop src="/profile1.png" position="center" opacity={0.14} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
         <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-10">
           (04) — Contact

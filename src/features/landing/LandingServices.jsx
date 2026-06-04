@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layers, Server, Cpu, Boxes, ClipboardList } from "lucide-react";
 import { Reveal } from "@/components/common/Reveal";
+import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 
 const easing = [0.16, 1, 0.3, 1];
 
@@ -66,52 +67,63 @@ export function LandingServices() {
 
   return (
     <section id="skills" className="relative w-full py-28 md:py-40">
+      <SectionBackdrop src="/profile4.png" position="left" opacity={0.14} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
-        {/* LEFT — pinned display */}
+        {/* LEFT — pinned display. Heights are bounded (svh-based) so the whole
+            block fits on screen while sticky. */}
         <div className="md:col-span-5">
-          <div className="md:sticky md:top-28">
-            <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-8">
+          <div className="md:sticky md:top-24">
+            <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-6">
               (02) — Capabilities
             </Reveal>
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={cap.title}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.4, ease: easing }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.35, ease: easing }}
               >
-                <div className="font-display font-semibold leading-none text-ink/12 text-[clamp(5rem,12vw,11rem)]">
+                <div className="font-display font-semibold leading-none text-ink/12 text-[clamp(3.5rem,7vw,7rem)]">
                   {cap.no}
                 </div>
-                <h2 className="-mt-3 font-display font-semibold tracking-[-0.03em] text-ink text-[clamp(2.25rem,5vw,4rem)]">
+                <h2 className="-mt-2 font-display font-semibold tracking-[-0.03em] text-ink text-[clamp(2rem,4.2vw,3.25rem)]">
                   {cap.title}
                 </h2>
-                <p className="mt-4 max-w-sm text-ink-dim text-sm md:text-base leading-relaxed">
+                <p className="mt-3 max-w-sm text-ink-dim text-sm md:text-base leading-relaxed">
                   {cap.desc}
                 </p>
-
-                {/* accent panel — photo with the capability's gradient tint */}
-                <div className="mt-8 hidden md:block relative aspect-[5/3] w-full overflow-hidden rounded-2xl bg-bg-soft">
-                  <img
-                    src={cap.img}
-                    alt={cap.title}
-                    draggable={false}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                  {/* accent gradient tint + a dark wash for label/icon contrast */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${cap.grad} opacity-55 mix-blend-multiply`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-                  <cap.icon className="absolute right-6 bottom-6 size-12 text-white drop-shadow" />
-                  <span className="absolute left-6 top-6 font-mono text-[10px] uppercase tracking-[0.25em] text-white/90">
-                    {cap.tags.length} tools
-                  </span>
-                </div>
               </motion.div>
             </AnimatePresence>
+
+            {/* accent panel — ALL images stay mounted (preloaded) and crossfade
+                by opacity, so switching is instant with no load flash. Bounded
+                height keeps the card fully visible on screen. */}
+            <div
+              className="mt-6 hidden md:block relative w-full overflow-hidden rounded-2xl bg-bg-soft"
+              style={{ height: "clamp(150px, 24svh, 250px)" }}
+            >
+              {CAPABILITIES.map((c, idx) => (
+                <img
+                  key={c.title}
+                  src={c.img}
+                  alt=""
+                  aria-hidden
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+                  style={{ opacity: idx === active ? 1 : 0 }}
+                />
+              ))}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${cap.grad} opacity-55 mix-blend-multiply`}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+              <cap.icon className="absolute right-6 bottom-6 size-11 text-white drop-shadow" />
+              <span className="absolute left-6 top-6 font-mono text-[10px] uppercase tracking-[0.25em] text-white/90">
+                {cap.tags.length} tools
+              </span>
+            </div>
           </div>
         </div>
 

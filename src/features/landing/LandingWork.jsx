@@ -8,6 +8,7 @@ import {
 import { ArrowUpRight } from "lucide-react";
 import { useProjectStore } from "@/store";
 import { Reveal } from "@/components/common/Reveal";
+import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 import { cn } from "@/utils/cn";
 
 const easing = [0.16, 1, 0.3, 1];
@@ -36,6 +37,7 @@ export function LandingWork() {
       onMouseMove={onMove}
       className="relative w-full py-28 md:py-40"
     >
+      <SectionBackdrop src="/profile3.png" position="right" opacity={0.16} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
         <Reveal className="flex items-end justify-between gap-6 mb-14 md:mb-20">
           <div>

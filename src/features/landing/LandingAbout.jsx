@@ -1,5 +1,6 @@
 import { VelocityMarquee } from "@/components/common/Marquee";
 import { Reveal, RevealText } from "@/components/common/Reveal";
+import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 
 const KEYWORDS = [
   "React",
@@ -29,6 +30,7 @@ const STATS = [
 export function LandingAbout() {
   return (
     <section id="intro" className="relative w-full py-24 md:py-36">
+      <SectionBackdrop src="/profile6.png" position="right" opacity={0.16} />
       <VelocityMarquee
         items={KEYWORDS}
         baseVelocity={2.5}
