@@ -15,19 +15,20 @@ export function ChatLayout() {
   useVisualViewportHeight();
 
   return (
-    // The whole chat UI is pinned to the *visual* viewport rather than the
-    // layout viewport. `--app-vh` / `--app-vt` are kept in sync by
-    // useVisualViewportHeight (mounted in ChatWindow). Using `fixed` + a
-    // translateY of the viewport's offsetTop means that when the iOS keyboard
-    // opens — shrinking and panning the visual viewport — the entire shell
-    // (header + chat) shrinks and follows it exactly, so the bottom-docked
-    // input stays flush above the keyboard with no black dead-space below.
+    // The chat UI is `position: fixed`, so on the /chat route the document
+    // body has no in-flow content to scroll — iOS therefore can't pan the
+    // page when the keyboard opens (no black dead-space). Its height tracks
+    // the keyboard-aware *visual* viewport via `--app-vh` (kept in sync by
+    // useVisualViewportHeight), so opening the keyboard simply shrinks the
+    // shell from the bottom and the docked input rides up above it.
+    //
+    // NOTE: we deliberately do NOT translateY by visualViewport.offsetTop —
+    // a fixed top:0 element already sits at the visual-viewport top, and
+    // reacting to offsetTop fought iOS's own focus-scroll, producing a
+    // jump-to-top-then-settle flicker.
     <div
       className="fixed inset-x-0 top-0 flex flex-col bg-bg overflow-hidden"
-      style={{
-        height: "var(--app-vh, 100dvh)",
-        transform: "translateY(var(--app-vt, 0px))",
-      }}
+      style={{ height: "var(--app-vh, 100dvh)" }}
     >
       <header className="shrink-0 absolute top-0 inset-x-0 z-30">
         <div className="mx-auto max-w-5xl px-3 md:px-6 py-3 flex items-center justify-between gap-2">

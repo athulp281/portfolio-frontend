@@ -24,15 +24,7 @@ export function useVisualViewportHeight() {
 
     const set = () => {
       const h = vv ? vv.height : window.innerHeight;
-      // offsetTop = how far iOS has *panned* the visual viewport down inside
-      // the (unchanged) layout viewport when the keyboard opens. A fixed shell
-      // stays pinned to the layout-viewport top, so without compensating for
-      // this the bottom of the shell slides behind the keyboard and the dark
-      // body background shows through as a black band. We expose it so the
-      // shell can translateY by exactly this much and stay flush.
-      const top = vv ? vv.offsetTop : 0;
       root.style.setProperty("--app-vh", `${Math.round(h)}px`);
-      root.style.setProperty("--app-vt", `${Math.round(top)}px`);
     };
 
     set();
@@ -54,7 +46,6 @@ export function useVisualViewportHeight() {
         window.removeEventListener("resize", set);
       }
       root.style.removeProperty("--app-vh");
-      root.style.removeProperty("--app-vt");
     };
   }, []);
 }
