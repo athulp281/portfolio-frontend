@@ -91,12 +91,17 @@ export function ChatWindow() {
   };
 
   return (
-    // Fills the chat shell, whose height/position now follows the *visual*
-    // viewport (see ChatLayout + useVisualViewportHeight). `h-full` resolves
-    // here because the shell gives every ancestor a definite pixel height, so
-    // the bottom-docked input stays above the iOS keyboard with no black
-    // dead-space below it.
-    <div className="relative h-full w-full overflow-hidden">
+    // Explicit height — NOT `h-full`. `h-full` collapses to 0 inside Safari's
+    // flex-grown `<main flex-1>` (the documented "everything is black" bug),
+    // so we hard-set the height to the keyboard-aware visual viewport
+    // (`--app-vh`, kept in sync by useVisualViewportHeight) and fall back to
+    // `100dvh`. ChatLayout additionally translateY's the shell by the
+    // viewport's offsetTop so the bottom-docked input follows the iOS keyboard
+    // with no black dead-space below it.
+    <div
+      className="relative w-full overflow-hidden"
+      style={{ height: "var(--app-vh, 100dvh)" }}
+    >
       {/* Bg sits at z-0, all chat content at z-10 so the dark radial
           can't end up painted on top of the messages. */}
       <ChatBackgroundGlow />
