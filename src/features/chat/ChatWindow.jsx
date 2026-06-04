@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChatStore } from "@/store";
+import { useVisualViewportHeight } from "@/hooks/useVisualViewportHeight";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { ChatHero } from "./ChatHero";
@@ -27,6 +28,11 @@ export function ChatWindow() {
   const suggestions = useChatStore((s) => s.suggestions);
   const sendMessage = useChatStore((s) => s.sendMessage);
   const cancel = useChatStore((s) => s.cancel);
+
+  // Track the on-screen-keyboard-aware viewport height (see hook docs). This
+  // is what keeps the input dock glued above the iOS keyboard instead of
+  // hiding behind it.
+  useVisualViewportHeight();
 
   const scrollerRef = useRef(null);
   const stickToBottomRef = useRef(true);
@@ -91,13 +97,17 @@ export function ChatWindow() {
   };
 
   return (
-    // Hard-locked to 100dvh (mobile-aware viewport) instead of `h-full`.
-    // `h-full` only resolves when every ancestor has a definite height,
-    // and Safari's flex-grown `<main flex-1>` can collapse it to 0 — which
-    // showed up as "everything is black" because the chat surface had no
-    // box and only the body bg was visible. `h-[100dvh]` ignores parent
-    // height entirely, guaranteeing a full-viewport box.
-    <div className="relative h-[100dvh] w-full overflow-hidden">
+    // Height is driven by `--app-vh` (the keyboard-aware *visual* viewport
+    // height, set by useVisualViewportHeight) and falls back to `100dvh`
+    // where the visualViewport API is unavailable. We avoid `h-full` because
+    // it only resolves when every ancestor has a definite height, and
+    // Safari's flex-grown `<main flex-1>` can collapse it to 0 (the old
+    // "everything is black" bug). Anchoring to the visual viewport also keeps
+    // the bottom-docked input above the iOS keyboard instead of behind it.
+    <div
+      className="relative w-full overflow-hidden h-[100dvh]"
+      style={{ height: "var(--app-vh, 100dvh)" }}
+    >
       {/* Bg sits at z-0, all chat content at z-10 so the dark radial
           can't end up painted on top of the messages. */}
       <ChatBackgroundGlow />
@@ -166,7 +176,12 @@ export function ChatWindow() {
               className="absolute bottom-0 inset-x-0 z-20 pointer-events-none"
             >
               <div className="h-16 md:h-20 bg-gradient-to-t from-bg via-bg/90 to-transparent" />
-              <div className="bg-bg/40 backdrop-blur-2xl pointer-events-auto">
+              <div
+                className="bg-bg/40 backdrop-blur-2xl pointer-events-auto"
+                // Clear the iPhone home indicator when the keyboard is closed;
+                // collapses to 0 when the keyboard is open (no safe-area then).
+                style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+              >
                 <div className="mx-auto max-w-2xl lg:max-w-3xl w-full px-4 md:px-6 pt-1 pb-3 md:pb-4 space-y-2">
                   <ChatInput
                     busy={busy}

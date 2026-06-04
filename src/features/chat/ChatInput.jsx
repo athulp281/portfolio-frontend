@@ -90,9 +90,14 @@ export function ChatInput({
           // typed placeholder sits on the same baseline as the button.
           //   mobile: 11 + 16×1.375 + 11 = 44px ✓
           //   desktop: 12 + 18×1.375 + 12 = 48.75px ≈ 48px ✓
+          // NOTE: keep the mobile font-size at >= 16px (text-base). iOS
+          // Safari auto-zooms the page whenever a focused input/textarea has
+          // a font-size below 16px — the old `text-[15px]` tripped this on
+          // every tap. `md:text-[15px]` restores the tuned desktop size where
+          // no auto-zoom exists.
           isHero
             ? "min-h-[44px] md:min-h-[48px] px-3 md:px-4 py-[11px] md:py-3 text-base md:text-lg leading-snug"
-            : "px-4 py-2 text-[15px] leading-6 min-h-[24px]",
+            : "px-4 py-2 text-base md:text-[15px] leading-6 min-h-[24px]",
         )}
       />
 
