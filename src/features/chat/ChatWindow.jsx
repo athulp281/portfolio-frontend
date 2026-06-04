@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChatStore } from "@/store";
-import { useVisualViewportHeight } from "@/hooks/useVisualViewportHeight";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { ChatHero } from "./ChatHero";
@@ -28,11 +27,6 @@ export function ChatWindow() {
   const suggestions = useChatStore((s) => s.suggestions);
   const sendMessage = useChatStore((s) => s.sendMessage);
   const cancel = useChatStore((s) => s.cancel);
-
-  // Track the on-screen-keyboard-aware viewport height (see hook docs). This
-  // is what keeps the input dock glued above the iOS keyboard instead of
-  // hiding behind it.
-  useVisualViewportHeight();
 
   const scrollerRef = useRef(null);
   const stickToBottomRef = useRef(true);
@@ -97,17 +91,12 @@ export function ChatWindow() {
   };
 
   return (
-    // Height is driven by `--app-vh` (the keyboard-aware *visual* viewport
-    // height, set by useVisualViewportHeight) and falls back to `100dvh`
-    // where the visualViewport API is unavailable. We avoid `h-full` because
-    // it only resolves when every ancestor has a definite height, and
-    // Safari's flex-grown `<main flex-1>` can collapse it to 0 (the old
-    // "everything is black" bug). Anchoring to the visual viewport also keeps
-    // the bottom-docked input above the iOS keyboard instead of behind it.
-    <div
-      className="relative w-full overflow-hidden h-[100dvh]"
-      style={{ height: "var(--app-vh, 100dvh)" }}
-    >
+    // Fills the chat shell, whose height/position now follows the *visual*
+    // viewport (see ChatLayout + useVisualViewportHeight). `h-full` resolves
+    // here because the shell gives every ancestor a definite pixel height, so
+    // the bottom-docked input stays above the iOS keyboard with no black
+    // dead-space below it.
+    <div className="relative h-full w-full overflow-hidden">
       {/* Bg sits at z-0, all chat content at z-10 so the dark radial
           can't end up painted on top of the messages. */}
       <ChatBackgroundGlow />

@@ -2,6 +2,7 @@ import { Outlet, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useChatStore } from "@/store";
+import { useVisualViewportHeight } from "@/hooks/useVisualViewportHeight";
 
 export function ChatLayout() {
   const newChat = useChatStore((s) => s.newChat);
@@ -9,8 +10,25 @@ export function ChatLayout() {
     s.messages.some((m) => m.role === "user"),
   );
 
+  // Keeps --app-vh / --app-vt in sync with the keyboard-aware visual viewport
+  // so the shell below can shrink and follow the iOS keyboard.
+  useVisualViewportHeight();
+
   return (
-    <div className="relative h-screen min-h-screen flex flex-col bg-bg overflow-hidden">
+    // The whole chat UI is pinned to the *visual* viewport rather than the
+    // layout viewport. `--app-vh` / `--app-vt` are kept in sync by
+    // useVisualViewportHeight (mounted in ChatWindow). Using `fixed` + a
+    // translateY of the viewport's offsetTop means that when the iOS keyboard
+    // opens — shrinking and panning the visual viewport — the entire shell
+    // (header + chat) shrinks and follows it exactly, so the bottom-docked
+    // input stays flush above the keyboard with no black dead-space below.
+    <div
+      className="fixed inset-x-0 top-0 flex flex-col bg-bg overflow-hidden"
+      style={{
+        height: "var(--app-vh, 100dvh)",
+        transform: "translateY(var(--app-vt, 0px))",
+      }}
+    >
       <header className="shrink-0 absolute top-0 inset-x-0 z-30">
         <div className="mx-auto max-w-5xl px-3 md:px-6 py-3 flex items-center justify-between gap-2">
           <Link
