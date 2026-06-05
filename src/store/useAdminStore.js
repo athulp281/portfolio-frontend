@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import seed from "@/data/selectedWork.json";
+import { useAuthStore } from "./useAuthStore";
 import {
   adminLogin,
   fetchSelectedWork,
@@ -9,32 +10,21 @@ import {
 /**
  * Admin dashboard state for editing "Selected work".
  *
- * Auth: the password is held in memory + sessionStorage (cleared on tab close)
- * and re-verified server-side on every save. Editing mutates a local `items`
- * array; nothing reaches production until `save()` commits to GitHub.
- *
- * Local-dev note: the `/api/*` functions only run on Vercel (or `vercel dev`).
- * Under plain `npm run dev`, `load()` falls back to the bundled JSON so the UI
- * is still previewable, but `save()` will fail until deployed.
+ * Auth: login posts email+password to the backend, which returns a JWT. The
+ * token is stored in `useAuthStore` (persisted) and the axios interceptor sends
+ * it on every request; a 401/403 clears it (auto-logout). Editing mutates a
+ * local `items` array — nothing reaches production until `save()` asks the
+ * backend to commit to GitHub (which redeploys the site on Vercel).
  */
-const PW_KEY = "athion.admin.pw";
-
-function readStoredPassword() {
-  try {
-    return sessionStorage.getItem(PW_KEY) || "";
-  } catch {
-    return "";
-  }
+function errMsg(err, fallback) {
+  return err?.response?.data?.message || err?.message || fallback;
 }
 
 function reindexed(items) {
-  // Clone to a fresh array so React/zustand sees a new reference.
   return items.map((it) => ({ ...it }));
 }
 
 export const useAdminStore = create((set, get) => ({
-  authed: false,
-  password: "",
   items: [],
   status: "idle", // idle | loading | saving
   error: null,
@@ -43,37 +33,22 @@ export const useAdminStore = create((set, get) => ({
   loaded: false,
   lastCommit: null,
 
-  /** Re-hydrate auth from sessionStorage on mount (optimistic; save re-verifies). */
-  restore: () => {
-    const pw = readStoredPassword();
-    if (pw) set({ authed: true, password: pw });
-    return !!pw;
-  },
-
-  login: async (password) => {
+  login: async (email, password) => {
     set({ status: "loading", error: null });
     try {
-      await adminLogin(password);
-      try {
-        sessionStorage.setItem(PW_KEY, password);
-      } catch {
-        /* sessionStorage unavailable — keep in memory only */
-      }
-      set({ authed: true, password, status: "idle" });
+      const { token } = await adminLogin(email, password);
+      useAuthStore.getState().setToken(token);
+      set({ status: "idle" });
       return true;
     } catch (err) {
-      set({ status: "idle", error: err.message || "Login failed" });
+      set({ status: "idle", error: errMsg(err, "Login failed") });
       return false;
     }
   },
 
   logout: () => {
-    try {
-      sessionStorage.removeItem(PW_KEY);
-    } catch {
-      /* ignore */
-    }
-    set({ authed: false, password: "", error: null, notice: null });
+    useAuthStore.getState().clear();
+    set({ error: null, notice: null, loaded: false, items: [] });
   },
 
   load: async () => {
@@ -87,13 +62,13 @@ export const useAdminStore = create((set, get) => ({
         loaded: true,
       });
     } catch (err) {
-      // API unavailable (e.g. local dev) — fall back to bundled data.
+      // Backend unreachable — fall back to bundled data so the UI still renders.
       set({
         items: reindexed(seed),
         status: "idle",
         loaded: true,
         dirty: false,
-        notice: `Showing local data — live API unavailable (${err.message}).`,
+        notice: `Showing local data — backend unavailable (${errMsg(err, "error")}).`,
       });
     }
   },
@@ -122,25 +97,20 @@ export const useAdminStore = create((set, get) => ({
     }),
 
   save: async (message) => {
-    const { items, password } = get();
     set({ status: "saving", error: null, notice: null });
     try {
-      const res = await saveSelectedWork(items, password, message);
+      const res = await saveSelectedWork(get().items, message);
       set({
         status: "idle",
         dirty: false,
-        items: reindexed(res.items || items),
-        lastCommit: res.commit || null,
+        items: reindexed(res?.items || get().items),
+        lastCommit: res?.commit || null,
         notice: "Saved & committed — Vercel is deploying to production.",
       });
       return true;
     } catch (err) {
-      if (err.status === 401) {
-        get().logout();
-        set({ error: "Session expired — please log in again." });
-      } else {
-        set({ status: "idle", error: err.message || "Save failed" });
-      }
+      // 401/403 already cleared the token via the axios interceptor → gate shows.
+      set({ status: "idle", error: errMsg(err, "Save failed") });
       return false;
     }
   },

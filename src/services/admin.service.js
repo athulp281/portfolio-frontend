@@ -1,51 +1,26 @@
+import { api, unwrap } from "./axios";
+
 /**
- * Admin API — talks to the Vercel serverless functions in `/api`, NOT the
- * Express chat backend. Same-origin fetch (no axios instance / x-api-key).
+ * Admin API — talks to the Express backend. Auth is a JWT obtained from
+ * /auth/login and stored in useAuthStore; the axios request interceptor
+ * attaches it as `Authorization: Bearer <token>` automatically (along with the
+ * shared x-api-key). No secrets live in the frontend.
  */
-const BASE = "/api";
 
-async function parse(res) {
-  let json = {};
-  try {
-    json = await res.json();
-  } catch {
-    json = {};
-  }
-  if (!res.ok || !json.ok) {
-    const err = new Error(json.error || `Request failed (${res.status})`);
-    err.status = res.status;
-    throw err;
-  }
-  return json;
+/** Email + password login → returns { token, email }. */
+export async function adminLogin(email, password) {
+  const res = await api.post("/auth/login", { email, password });
+  return unwrap(res); // { token, email }
 }
 
-/** Verify the admin password so the UI can unlock. */
-export async function adminLogin(password) {
-  const res = await fetch(`${BASE}/admin/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password }),
-  });
-  await parse(res);
-  return true;
-}
-
-/** Latest committed work items (read live from GitHub via the function). */
+/** Latest committed work items (backend reads them from GitHub). */
 export async function fetchSelectedWork() {
-  const res = await fetch(`${BASE}/selected-work`);
-  const json = await parse(res);
-  return json.items;
+  const res = await api.get("/admin/selected-work");
+  return unwrap(res)?.items ?? [];
 }
 
-/** Commit the items array → GitHub → Vercel redeploys. */
-export async function saveSelectedWork(items, password, message) {
-  const res = await fetch(`${BASE}/selected-work`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-password": password,
-    },
-    body: JSON.stringify({ items, message }),
-  });
-  return parse(res);
+/** Commit the items array (backend → GitHub → Vercel redeploys). */
+export async function saveSelectedWork(items, message) {
+  const res = await api.post("/admin/selected-work", { items, message });
+  return unwrap(res); // { items, commit }
 }
