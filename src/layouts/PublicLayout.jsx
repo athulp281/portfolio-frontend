@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, Menu, X, ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/common/Magnetic";
 
 export function PublicLayout() {
@@ -92,8 +93,11 @@ function scrollToSection(id, targetProgress = 0) {
 }
 
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const handleNavClick = (e, link) => {
     e.preventDefault();
+    setMenuOpen(false);
     const id = link.href.replace("#", "");
     scrollToSection(id, link.targetProgress);
     if (typeof history !== "undefined" && history.replaceState) {
@@ -132,7 +136,7 @@ function Header() {
           </span>
         </Link>
 
-        {/* Centered pill nav */}
+        {/* Centered pill nav (desktop) */}
         <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 rounded-full glass px-2 py-1.5">
           {NAV_LINKS.map((link) => (
             <a
@@ -147,19 +151,148 @@ function Header() {
           ))}
         </nav>
 
-        {/* Round CTA (right) */}
-        <Magnetic strength={0.4}>
-          <Link
-            to="/chat"
-            aria-label="Talk with my AI"
-            data-cursor="hover"
-            className="group grid place-items-center size-11 rounded-full glass neon-border hover:shadow-neon transition-shadow"
+        {/* Right cluster */}
+        <div className="flex items-center gap-2.5">
+          <Magnetic strength={0.4}>
+            <Link
+              to="/chat"
+              aria-label="Talk with my AI"
+              data-cursor="hover"
+              className="group grid place-items-center size-11 rounded-full glass neon-border hover:shadow-neon transition-shadow"
+            >
+              <Sparkles className="size-4 text-neon-cyan transition-transform duration-500 group-hover:rotate-12" />
+            </Link>
+          </Magnetic>
+
+          {/* Hamburger (mobile only) */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            className="md:hidden grid place-items-center size-11 rounded-full glass text-ink"
           >
-            <Sparkles className="size-4 text-neon-cyan transition-transform duration-500 group-hover:rotate-12" />
-          </Link>
-        </Magnetic>
+            <Menu className="size-5" />
+          </button>
+        </div>
       </div>
+
+      <MobileDrawer
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onNavClick={handleNavClick}
+      />
     </motion.header>
+  );
+}
+
+/* =========================================================================
+ * MobileDrawer — animated right-slide sidebar for the nav links on mobile.
+ * ========================================================================= */
+const drawerEase = [0.16, 1, 0.3, 1];
+
+function MobileDrawer({ open, onClose, onNavClick }) {
+  // Lock page scroll (and pause Lenis) while the drawer is open.
+  useEffect(() => {
+    if (open) {
+      window.__lenis?.stop?.();
+      document.body.style.overflow = "hidden";
+    } else {
+      window.__lenis?.start?.();
+      document.body.style.overflow = "";
+    }
+    return () => {
+      window.__lenis?.start?.();
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={onClose}
+            className="fixed inset-0 z-40 bg-bg/70 backdrop-blur-sm md:hidden"
+          />
+
+          {/* Panel */}
+          <motion.aside
+            key="panel"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 260, damping: 32 }}
+            className="fixed top-0 right-0 z-50 h-[100dvh] w-[82%] max-w-sm md:hidden flex flex-col bg-bg-soft border-l border-line/10 shadow-glass"
+          >
+            <div className="flex items-center justify-between px-6 py-5 border-b border-line/10">
+              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-ink-mute">
+                Menu
+              </span>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close menu"
+                className="grid place-items-center size-10 rounded-full glass text-ink"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            {/* Links */}
+            <motion.nav
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.07, delayChildren: 0.12 } },
+              }}
+              className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-1"
+            >
+              {NAV_LINKS.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => onNavClick(e, link)}
+                  variants={{
+                    hidden: { opacity: 0, x: 28 },
+                    show: { opacity: 1, x: 0 },
+                  }}
+                  transition={{ duration: 0.5, ease: drawerEase }}
+                  className="group flex items-baseline gap-3 py-3 border-b border-line/10"
+                >
+                  <span className="font-mono text-xs text-ink-mute w-7">
+                    0{i + 1}
+                  </span>
+                  <span className="font-display font-semibold text-3xl tracking-[-0.02em] text-ink-dim group-hover:text-ink transition-colors">
+                    {link.label}
+                  </span>
+                </motion.a>
+              ))}
+            </motion.nav>
+
+            {/* CTA */}
+            <div className="px-6 pb-8 pt-2">
+              <Link
+                to="/chat"
+                onClick={onClose}
+                className="group inline-flex w-full items-center justify-between gap-3 rounded-full bg-ink text-bg pl-6 pr-2 py-2.5 text-sm font-medium"
+              >
+                Talk with my AI
+                <span className="grid place-items-center size-9 rounded-full bg-bg text-ink transition-transform duration-500 group-hover:rotate-45">
+                  <ArrowUpRight className="size-4" />
+                </span>
+              </Link>
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
