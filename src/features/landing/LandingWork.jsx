@@ -6,6 +6,7 @@ import {
   useTransform,
   cubicBezier,
 } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { useProjectStore } from "@/store";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 import { cn } from "@/utils/cn";
@@ -177,6 +178,21 @@ function DealCard({ project, index, total, p, image }) {
               </span>
             ))}
           </div>
+
+          {project.link && (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="hover"
+              className="group/btn mt-5 inline-flex items-center gap-2 rounded-full bg-ink text-bg pl-4 pr-2 py-1.5 text-xs font-medium hover:opacity-90 transition"
+            >
+              Visit project
+              <span className="grid place-items-center size-6 rounded-full bg-bg text-ink transition-transform duration-500 group-hover/btn:rotate-45">
+                <ArrowUpRight className="size-3.5" />
+              </span>
+            </a>
+          )}
         </div>
       </motion.article>
     </div>

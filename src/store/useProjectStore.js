@@ -12,6 +12,16 @@ import {
  */
 const FEATURED_PROJECTS = [
   {
+    id: "wyntrio-solutions",
+    title: "Wyntrio Solutions",
+    summary:
+      "Next.js SEO-friendly website for a service-providing company — server-rendered, fast, and optimized for search.",
+    stack: ["Next.js", "SSR", "SEO", "Tailwind"],
+    accent: "from-neon-cyan to-neon-pink",
+    image: "/projectimages/wyntriosolutions.png",
+    link: "https://wyntriosolutions.com/",
+  },
+  {
     id: "student-portal",
     title: "Student Portal",
     summary:
@@ -19,6 +29,7 @@ const FEATURED_PROJECTS = [
     stack: ["Next.js", "Prisma", "MySQL", "OpenAI", "Firebase"],
     accent: "from-neon-cyan to-neon-violet",
     image: "/projectimages/studentportal.png",
+    link: "https://student.intervaledu.com/",
   },
   {
     id: "bgv",
@@ -37,6 +48,7 @@ const FEATURED_PROJECTS = [
     stack: ["React", "Redux", "Node", "MySQL"],
     accent: "from-neon-pink to-neon-cyan",
     image: "/projectimages/employeemanagement.png",
+    link: "https://portal.teaminterval.net/",
   },
   {
     id: "assessment",
@@ -46,6 +58,7 @@ const FEATURED_PROJECTS = [
     stack: ["React", "MUI", "Express", "Sequelize"],
     accent: "from-neon-lime to-neon-cyan",
     image: "/projectimages/assessmentreport.png",
+    link: "https://portal.teaminterval.net/",
   },
   {
     id: "cabin-booking",
@@ -64,6 +77,7 @@ const FEATURED_PROJECTS = [
     stack: ["Next.js", "Bootstrap", "SSR"],
     accent: "from-neon-violet to-neon-cyan",
     image: "/projectimages/spanora.png",
+    link: "https://spanora.com.sa/",
   },
 ];
 
