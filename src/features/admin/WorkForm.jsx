@@ -87,7 +87,8 @@ export function WorkForm({ initial, existingIds = [], onSubmit, onCancel }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.25 }}
         onSubmit={submit}
-        className="relative w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/10 bg-bg-panel p-6 shadow-glass"
+        data-lenis-prevent
+        className="relative w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-bg-panel p-6 shadow-glass"
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-display text-lg font-semibold text-ink">
