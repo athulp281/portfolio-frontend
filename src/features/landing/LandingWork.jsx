@@ -142,7 +142,7 @@ function DealCard({ project, index, total, p, image }) {
     >
       <motion.article
         style={{ x, y, rotateZ, scale, opacity }}
-        className="group w-[clamp(280px,58vw,430px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
+        className="group w-[90vw] sm:w-[clamp(280px,58vw,430px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
         data-cursor-label="View"
       >
         <div className="relative aspect-[16/9] overflow-hidden">
