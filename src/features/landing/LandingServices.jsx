@@ -1,5 +1,10 @@
 import { useRef, useState } from "react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useMotionValueEvent,
+} from "framer-motion";
 import { Layers, Server, Cpu, Boxes, ClipboardList } from "lucide-react";
 import { Reveal } from "@/components/common/Reveal";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
@@ -66,13 +71,19 @@ export function LandingServices() {
   const cap = CAPABILITIES[active];
   const listRef = useRef(null);
 
-  // Drive the active card from the list's scroll progress — smooth and
-  // deterministic (no per-item viewport callbacks fighting each other).
+  // Drive the active card from the list's scroll progress, smoothed through a
+  // slow overdamped spring so fast scrolling paces the changes gently instead
+  // of jumping straight to the end.
   const { scrollYProgress } = useScroll({
     target: listRef,
     offset: ["start center", "end center"],
   });
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
+  const smooth = useSpring(scrollYProgress, {
+    stiffness: 46,
+    damping: 28,
+    mass: 1.15,
+  });
+  useMotionValueEvent(smooth, "change", (v) => {
     const i = Math.min(
       CAPABILITIES.length - 1,
       Math.max(0, Math.floor(v * CAPABILITIES.length)),
@@ -96,9 +107,9 @@ export function LandingServices() {
                 blocking (which made fast scrolling feel stuck). */}
             <motion.div
               key={cap.title}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: easing }}
+              transition={{ duration: 0.6, ease: easing }}
             >
               <div className="font-display font-semibold leading-none text-ink/12 text-[clamp(3.5rem,7vw,7rem)]">
                 {cap.no}
@@ -125,7 +136,7 @@ export function LandingServices() {
                   alt=""
                   aria-hidden
                   draggable={false}
-                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
                   style={{ opacity: idx === active ? 1 : 0 }}
                 />
               ))}
@@ -150,7 +161,7 @@ export function LandingServices() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, ease: easing }}
-                className="border-b border-line/12 py-10 md:py-14"
+                className="border-b border-line/12 py-14 md:py-20"
               >
                 <div className="flex items-baseline justify-between gap-4">
                   <motion.h3

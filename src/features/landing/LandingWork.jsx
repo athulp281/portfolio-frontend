@@ -38,12 +38,12 @@ export function LandingWork() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  // Heavily-damped spring → consistent smooth deal whether scrolling fast or
-  // slow (velocity spikes are absorbed by the extra mass + damping).
+  // Slow, overdamped spring → the deal glides gently and keeps playing
+  // smoothly even after a fast flick (velocity is fully absorbed).
   const p = useSpring(scrollYProgress, {
-    stiffness: 70,
-    damping: 34,
-    mass: 0.9,
+    stiffness: 46,
+    damping: 28,
+    mass: 1.15,
   });
 
   return (
@@ -51,17 +51,17 @@ export function LandingWork() {
       ref={sectionRef}
       id="work"
       className="relative"
-      style={{ height: `${Math.max(300, n * 62)}svh` }}
+      style={{ height: `${Math.max(320, n * 80)}svh` }}
     >
       <SectionBackdrop src="/profile3.png" position="right" opacity={0.18} />
 
       <div className="sticky top-0 h-[100svh] overflow-hidden flex flex-col">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-10 pt-24 md:pt-28 flex items-end justify-between gap-6">
+        <div className="mx-auto w-full max-w-7xl px-6 md:px-10 pt-20 md:pt-24 flex items-end justify-between gap-6">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute">
               (03) — Selected work
             </div>
-            <h2 className="mt-4 font-display font-semibold tracking-[-0.03em] leading-[0.95] text-ink text-[clamp(2rem,6vw,4.5rem)]">
+            <h2 className="mt-3 font-display font-semibold tracking-[-0.03em] leading-[0.95] text-ink text-[clamp(1.75rem,5vw,3.5rem)]">
               Things I've shipped
             </h2>
           </div>
@@ -139,10 +139,10 @@ function DealCard({ project, index, total, p, image }) {
     >
       <motion.article
         style={{ x, y, rotateZ, scale, opacity }}
-        className="w-[clamp(290px,74vw,540px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
+        className="w-[clamp(280px,58vw,430px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
         data-cursor-label="View"
       >
-        <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="relative aspect-[16/9] overflow-hidden">
           <img
             src={image}
             alt={project.title}
@@ -161,11 +161,11 @@ function DealCard({ project, index, total, p, image }) {
           </span>
         </div>
 
-        <div className="p-5 md:p-7">
-          <h3 className="font-display font-semibold tracking-[-0.02em] text-2xl md:text-3xl text-ink">
+        <div className="p-4 md:p-6">
+          <h3 className="font-display font-semibold tracking-[-0.02em] text-xl md:text-2xl text-ink">
             {project.title}
           </h3>
-          <p className="mt-2 text-ink-dim text-sm md:text-[15px] leading-relaxed">
+          <p className="mt-2 text-ink-dim text-sm leading-relaxed line-clamp-2">
             {project.summary}
           </p>
           <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
