@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, ArrowRight, Mail, Lock } from "lucide-react";
+import { Loader2, ArrowRight, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAdminStore } from "@/store";
 import { cn } from "@/utils/cn";
 
@@ -105,6 +105,7 @@ function GhostMarquee({ text }) {
 export function AdminGate() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const login = useAdminStore((s) => s.login);
   const status = useAdminStore((s) => s.status);
   const error = useAdminStore((s) => s.error);
@@ -189,11 +190,15 @@ export function AdminGate() {
             />
             <Field
               icon={Lock}
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              toggle={{
+                shown: showPassword,
+                onToggle: () => setShowPassword((v) => !v),
+              }}
             />
 
             {error && (
@@ -232,14 +237,27 @@ export function AdminGate() {
   );
 }
 
-function Field({ icon: Icon, ...props }) {
+function Field({ icon: Icon, toggle, ...props }) {
   return (
     <div className="group relative">
       <Icon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-white/35 transition group-focus-within:text-orange-400" />
       <input
         {...props}
-        className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-3.5 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-500/60 focus:bg-white/[0.05]"
+        className={cn(
+          "w-full rounded-xl border border-white/10 bg-white/[0.03] py-3.5 pl-11 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-500/60 focus:bg-white/[0.05]",
+          toggle ? "pr-11" : "pr-4",
+        )}
       />
+      {toggle && (
+        <button
+          type="button"
+          onClick={toggle.onToggle}
+          aria-label={toggle.shown ? "Hide password" : "Show password"}
+          className="absolute right-2.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-md text-white/40 transition hover:text-white/80"
+        >
+          {toggle.shown ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+        </button>
+      )}
     </div>
   );
 }
