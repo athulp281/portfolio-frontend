@@ -7,6 +7,7 @@ import { Loader } from "@/components/common/Loader";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const ChatPage = lazy(() => import("@/pages/ChatPage"));
+const AdminPage = lazy(() => import("@/pages/AdminPage"));
 
 const pageVariants = {
   initial: { opacity: 0, y: 16, filter: "blur(6px)" },
@@ -49,6 +50,10 @@ export function AppRoutes() {
               }
             />
           </Route>
+          {/* Standalone, full-height admin — no public layout/animation wrapper
+              (the wrapper's lingering filter/transform would break fixed-position
+              modals inside the dashboard). */}
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AnimatePresence>

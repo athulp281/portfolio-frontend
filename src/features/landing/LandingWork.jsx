@@ -6,34 +6,15 @@ import {
   useTransform,
   cubicBezier,
 } from "framer-motion";
-import {
-  ArrowUpRight,
-  Globe,
-  GraduationCap,
-  ShieldCheck,
-  Users,
-  ClipboardCheck,
-  CalendarCheck,
-  Search,
-} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useProjectStore } from "@/store";
+import { resolveIcon, resolveAccent } from "@/data/workMeta";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 import { cn } from "@/utils/cn";
 
 // Must be an easing FUNCTION (not a raw bezier array) for useTransform's
 // `ease` option on multi-segment ranges.
 const easeIO = cubicBezier(0.65, 0, 0.35, 1);
-
-// A fitting icon per project, shown centred on the card image.
-const PROJECT_ICONS = {
-  "wyntrio-solutions": Globe,
-  "student-portal": GraduationCap,
-  bgv: ShieldCheck,
-  "employee-mgmt": Users,
-  assessment: ClipboardCheck,
-  "cabin-booking": CalendarCheck,
-  spanora: Search,
-};
 
 // Stock imagery for the card faces (cycled across projects by index).
 const PROJECT_IMAGES = [
@@ -109,7 +90,8 @@ export function LandingWork() {
 }
 
 function DealCard({ project, index, total, p, image }) {
-  const Icon = PROJECT_ICONS[project.id] || Globe;
+  const Icon = resolveIcon(project.icon);
+  const accentClass = resolveAccent(project.accent);
   const last = index === total - 1;
   const a = index / total; // deal-off start
   const b = (index + 1) / total; // deal-off end
@@ -174,7 +156,7 @@ function DealCard({ project, index, total, p, image }) {
           <div
             className={cn(
               "absolute inset-0 bg-gradient-to-tr opacity-35 mix-blend-multiply",
-              project.accent,
+              accentClass,
             )}
           />
           {/* moody overlay */}
@@ -200,7 +182,7 @@ function DealCard({ project, index, total, p, image }) {
             {project.summary}
           </p>
           <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
-            {project.stack.map((t) => (
+            {(project.stack || []).map((t) => (
               <span
                 key={t}
                 className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-mute"
