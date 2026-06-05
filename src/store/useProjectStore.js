@@ -18,6 +18,7 @@ const FEATURED_PROJECTS = [
       "Next.js + Prisma student platform with dashboards, scheduling, grievance tracking, and an OpenAI/RAG chatbot.",
     stack: ["Next.js", "Prisma", "MySQL", "OpenAI", "Firebase"],
     accent: "from-neon-cyan to-neon-violet",
+    image: "/projectimages/studentportal.png",
   },
   {
     id: "bgv",
@@ -26,6 +27,7 @@ const FEATURED_PROJECTS = [
       "Workflow + RBAC heavy app with document verification and email notifications.",
     stack: ["Next.js", "Redux Toolkit", "Sequelize", "MySQL"],
     accent: "from-neon-violet to-neon-pink",
+    image: "/projectimages/backgroundverification.png",
   },
   {
     id: "employee-mgmt",
@@ -34,6 +36,7 @@ const FEATURED_PROJECTS = [
       "Profiles, attendance, RBAC, search & filtering across a 50+ user team.",
     stack: ["React", "Redux", "Node", "MySQL"],
     accent: "from-neon-pink to-neon-cyan",
+    image: "/projectimages/employeemanagement.png",
   },
   {
     id: "assessment",
@@ -42,6 +45,7 @@ const FEATURED_PROJECTS = [
       "Dynamic question handling, evaluation pipeline, and report generation.",
     stack: ["React", "MUI", "Express", "Sequelize"],
     accent: "from-neon-lime to-neon-cyan",
+    image: "/projectimages/assessmentreport.png",
   },
   {
     id: "cabin-booking",
@@ -50,6 +54,7 @@ const FEATURED_PROJECTS = [
       "Real-time availability, slot booking, and scheduling for an office.",
     stack: ["React", "MUI", "Sequelize", "MySQL"],
     accent: "from-neon-cyan to-neon-lime",
+    image: "/projectimages/cabinbooking.png",
   },
   {
     id: "spanora",
@@ -58,6 +63,7 @@ const FEATURED_PROJECTS = [
       "SSR Next.js marketing site optimized for SEO and Core Web Vitals.",
     stack: ["Next.js", "Bootstrap", "SSR"],
     accent: "from-neon-violet to-neon-cyan",
+    image: "/projectimages/spanora.png",
   },
 ];
 

@@ -78,7 +78,7 @@ export function LandingWork() {
               index={i}
               total={n}
               p={p}
-              image={PROJECT_IMAGES[i % PROJECT_IMAGES.length]}
+              image={project.image || PROJECT_IMAGES[i % PROJECT_IMAGES.length]}
             />
           ))}
         </div>
