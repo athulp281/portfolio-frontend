@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { VelocityMarquee } from "@/components/common/Marquee";
 import { Reveal, RevealText } from "@/components/common/Reveal";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
@@ -23,14 +25,19 @@ const STATS = [
 ];
 
 /**
- * About — a velocity marquee, then an oversized statement that reveals word
- * by word, a supporting bio, and stats laid out as a hairline-divided list
- * (no boxes).
+ * About — velocity marquee, an oversized word-revealed statement, a bio, and a
+ * row of stats where EACH number has its own scroll-driven entrance:
+ *   0 · clip wipe (left → right)
+ *   1 · 3D flip up
+ *   2 · zoom + de-blur
+ *   3 · masked rise + letter-spacing settle
+ * All ease into an identity rest pose (so the text stays crisp once settled).
  */
 export function LandingAbout() {
   return (
     <section id="intro" className="relative w-full py-24 md:py-36">
       <SectionBackdrop src="/profile6.png" position="right" opacity={0.24} />
+
       <VelocityMarquee
         items={KEYWORDS}
         baseVelocity={2.5}
@@ -52,34 +59,94 @@ export function LandingAbout() {
           />
         </h2>
 
-        <div className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-12">
-          <Reveal className="md:col-span-6 text-ink-dim text-base md:text-lg leading-relaxed">
-            I'm a full-stack developer based in Kerala, India. For the last four
-            years I've shipped scalable React / Next.js apps and Node services —
-            and lately, AI-augmented products powered by OpenAI and custom RAG
-            pipelines. Athion AI, the assistant on this site, is one of them:
-            ask it anything about my work and it answers in real time.
-          </Reveal>
+        <Reveal className="mt-12 md:mt-16 max-w-2xl text-ink-dim text-base md:text-lg leading-relaxed">
+          I'm a full-stack developer based in Kerala, India. For the last four
+          years I've shipped scalable React / Next.js apps and Node services —
+          and lately, AI-augmented products powered by OpenAI and custom RAG
+          pipelines. Athion AI, the assistant on this site, is one of them.
+        </Reveal>
 
-          {/* stats — hairline-divided list, no boxes */}
-          <div className="md:col-span-6 md:pl-10">
-            <div className="border-t border-line/12">
-              {STATS.map((s, i) => (
-                <Reveal key={s.label} delay={i * 0.07}>
-                  <div className="flex items-baseline justify-between gap-6 py-5 border-b border-line/12">
-                    <span className="font-display text-3xl md:text-5xl font-semibold text-ink tracking-[-0.02em]">
-                      {s.value}
-                    </span>
-                    <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.2em] text-ink-mute">
-                      {s.label}
-                    </span>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
+        {/* Stats — each with a unique scroll-driven animation */}
+        <div className="mt-20 md:mt-28 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-14">
+          {STATS.map((s, i) => (
+            <StatItem key={s.label} value={s.value} label={s.label} index={i} />
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+const NUMBER_CLS =
+  "font-display font-semibold text-ink tracking-[-0.03em] leading-none text-[clamp(2.5rem,7vw,5rem)]";
+
+function StatItem({ value, label, index }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 92%", "start 42%"],
+  });
+  // Smooth, consistent regardless of scroll speed.
+  const p = useSpring(scrollYProgress, { stiffness: 60, damping: 26, mass: 1 });
+
+  const opacity = useTransform(p, [0, 0.55], [0, 1]);
+  // 0 — clip wipe
+  const clipPath = useTransform(p, [0, 1], ["inset(0 100% 0 0)", "inset(0 0% 0 0)"]);
+  const x = useTransform(p, [0, 1], [-26, 0]);
+  // 1 — flip up
+  const rotateX = useTransform(p, [0, 1], [88, 0]);
+  const y = useTransform(p, [0, 1], [44, 0]);
+  // 2 — zoom + de-blur
+  const scale = useTransform(p, [0, 1], [0.45, 1]);
+  const blur = useTransform(p, [0, 1], ["blur(18px)", "blur(0px)"]);
+  // 3 — masked rise + letter-spacing
+  const innerY = useTransform(p, [0, 1], ["115%", "0%"]);
+  const letterSpacing = useTransform(p, [0, 1], ["0.22em", "0em"]);
+
+  let number;
+  if (index === 0) {
+    number = (
+      <motion.div style={{ clipPath, x, opacity }} className={NUMBER_CLS}>
+        {value}
+      </motion.div>
+    );
+  } else if (index === 1) {
+    number = (
+      <motion.div
+        style={{ rotateX, y, opacity, transformPerspective: 700, transformOrigin: "bottom" }}
+        className={NUMBER_CLS}
+      >
+        {value}
+      </motion.div>
+    );
+  } else if (index === 2) {
+    number = (
+      <motion.div style={{ scale, filter: blur, opacity }} className={NUMBER_CLS}>
+        {value}
+      </motion.div>
+    );
+  } else {
+    number = (
+      <span className="block overflow-hidden pb-[0.1em]">
+        <motion.span
+          style={{ y: innerY, letterSpacing, opacity }}
+          className={`block ${NUMBER_CLS}`}
+        >
+          {value}
+        </motion.span>
+      </span>
+    );
+  }
+
+  return (
+    <div ref={ref} className="border-t border-line/12 pt-5">
+      {number}
+      <motion.div
+        style={{ opacity }}
+        className="mt-3 font-mono text-[10px] md:text-xs uppercase tracking-[0.22em] text-ink-mute"
+      >
+        {label}
+      </motion.div>
+    </div>
   );
 }

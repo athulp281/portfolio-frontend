@@ -3,6 +3,7 @@ import {
   motion,
   useScroll,
   useSpring,
+  useTransform,
   useMotionValueEvent,
 } from "framer-motion";
 import { Reveal } from "@/components/common/Reveal";
@@ -24,6 +25,62 @@ const CAPABILITIES = capabilitiesData.map((c, i) => ({
   Icon: resolveCapIcon(c.icon),
   gradClass: resolveGrad(c.grad),
 }));
+
+/**
+ * CapRow — a capability list row with its own scroll-driven entrance. Five
+ * distinct motions (one per capability): slide-in, zoom+deblur, 3D flip,
+ * skew-settle, and a bottom clip-wipe. Each eases into an identity rest pose.
+ */
+function CapRow({ c, index, active }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 90%", "start 45%"],
+  });
+  const p = useSpring(scrollYProgress, { stiffness: 60, damping: 26, mass: 1 });
+
+  const opacity = useTransform(p, [0, 0.5], [0, 1]);
+  const x = useTransform(p, [0, 1], [80, 0]);
+  const scale = useTransform(p, [0, 1], [0.84, 1]);
+  const blur = useTransform(p, [0, 1], ["blur(14px)", "blur(0px)"]);
+  const rotateX = useTransform(p, [0, 1], [72, 0]);
+  const skewY = useTransform(p, [0, 1], [7, 0]);
+  const xSkew = useTransform(p, [0, 1], [44, 0]);
+  const clipPath = useTransform(
+    p,
+    [0, 1],
+    ["inset(0 0 100% 0)", "inset(0 0 0% 0)"],
+  );
+
+  const styles = [
+    { x, opacity },
+    { scale, filter: blur, opacity, transformOrigin: "left" },
+    { rotateX, opacity, transformPerspective: 800, transformOrigin: "top" },
+    { skewY, x: xSkew, opacity },
+    { clipPath, opacity },
+  ];
+  const style = styles[index % styles.length];
+
+  return (
+    <motion.div style={style} className="border-b border-line/12 py-14 md:py-20">
+      <div className="flex items-baseline justify-between gap-4">
+        <motion.h3
+          className="font-display font-semibold tracking-[-0.02em] text-[clamp(1.6rem,4vw,2.75rem)] transition-colors duration-300"
+          animate={{ color: active === index ? "#e6e9f2" : "#5b647a" }}
+        >
+          {c.title}
+        </motion.h3>
+        <span className="font-mono text-xs text-ink-mute shrink-0">{c.no}</span>
+      </div>
+      <p className="mt-3 max-w-lg text-ink-dim text-sm md:text-base leading-relaxed">
+        {c.desc}
+      </p>
+      <p className="mt-4 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-ink-mute">
+        {c.tags.join("  ·  ")}
+      </p>
+    </motion.div>
+  );
+}
 
 /**
  * Capabilities — a "now-showing" split. The left column is pinned (sticky) and
@@ -116,36 +173,12 @@ export function LandingServices() {
             </div>
         </div>
 
-        {/* RIGHT — scrollable list; its scroll progress drives the active card */}
+        {/* RIGHT — scrollable list; its scroll progress drives the active card,
+            and each row has its own unique scroll-driven entrance. */}
         <div className="md:col-span-7 md:pt-16" ref={listRef}>
           <div className="border-t border-line/12">
             {CAPABILITIES.map((c, i) => (
-              <motion.div
-                key={c.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, ease: easing }}
-                className="border-b border-line/12 py-14 md:py-20"
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <motion.h3
-                    className="font-display font-semibold tracking-[-0.02em] text-[clamp(1.6rem,4vw,2.75rem)] transition-colors duration-300"
-                    animate={{ color: active === i ? "#e6e9f2" : "#5b647a" }}
-                  >
-                    {c.title}
-                  </motion.h3>
-                  <span className="font-mono text-xs text-ink-mute shrink-0">
-                    {c.no}
-                  </span>
-                </div>
-                <p className="mt-3 max-w-lg text-ink-dim text-sm md:text-base leading-relaxed">
-                  {c.desc}
-                </p>
-                <p className="mt-4 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-ink-mute">
-                  {c.tags.join("  ·  ")}
-                </p>
-              </motion.div>
+              <CapRow key={c.title} c={c} index={i} active={active} />
             ))}
           </div>
         </div>
