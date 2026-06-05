@@ -60,6 +60,7 @@ const CARDS = [
     title: "Next-Gen Development & AI-Augmented Coding",
     desc: "Building with frontier LLMs — OpenAI, Claude and Gemini — wired into real workflows.",
     icons: [SiOpenai, SiClaude, SiGooglegemini],
+    bg: "/new%20images/software-developer-working-stockcake.webp",
     tone: "dark",
     fan: -12,
     rotEnd: -9, // final tilt on the rainbow arc
@@ -69,6 +70,7 @@ const CARDS = [
     title: "Scalable Architecture & Production Systems",
     desc: "Typed APIs, data layers and infrastructure that scale reliably in production.",
     icons: [Server, Database, Network],
+    bg: "/new%20images/young-contemporary-software-developer-working-by-computer_274679-30538.avif",
     tone: "light",
     fan: 0,
     rotEnd: 0,
@@ -78,6 +80,7 @@ const CARDS = [
     title: "Business Impact & Automation",
     desc: "Turning manual workflows into automated, measurable business outcomes.",
     icons: [TrendingUp, Workflow, Zap],
+    bg: "/new%20images/canva-software-developer-working.jpg",
     tone: "dark",
     fan: 12,
     rotEnd: 9,
@@ -343,9 +346,9 @@ function SplitCard({ card, index, p, go, dims }) {
           />
         </div>
 
-        {/* BACK — capability content card (compact on the narrow mobile panels) */}
+        {/* BACK — content card with a faint, lightweight bg image filling it */}
         <div
-          className="absolute inset-0 rounded-2xl border p-3 md:p-6 flex flex-col justify-between"
+          className="absolute inset-0 overflow-hidden rounded-2xl border p-4 md:p-6 flex flex-col justify-between"
           style={{
             transform: "rotateY(180deg)",
             backfaceVisibility: "hidden",
@@ -355,24 +358,38 @@ function SplitCard({ card, index, p, go, dims }) {
               card.tone === "light" ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.1)",
           }}
         >
+          {/* faint background image (static + grayscale = smooth & light) */}
+          <img
+            src={card.bg}
+            alt=""
+            aria-hidden
+            draggable={false}
+            className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+            style={{
+              opacity: card.tone === "light" ? 0.1 : 0.18,
+              filter: "grayscale(1) contrast(1.05)",
+            }}
+          />
+
           <div
-            className="flex items-center gap-2.5 md:gap-3.5"
+            className="relative flex items-center gap-3 md:gap-3.5"
             style={{ color: card.tone === "light" ? "#05060a" : "#22d3ee" }}
           >
             {card.icons.map((Ic, k) => (
-              <Ic key={k} className="size-5 md:size-7" />
+              <Ic key={k} className="size-6 md:size-7" />
             ))}
           </div>
-          <div>
+
+          <div className="relative">
             <h3
-              className="font-display font-semibold text-[13px] md:text-xl leading-tight tracking-[-0.02em]"
+              className="font-display font-semibold text-[15px] md:text-2xl leading-[1.15] tracking-[-0.02em]"
               style={{ color: card.tone === "light" ? "#05060a" : "#e6e9f2" }}
             >
               {card.title}
             </h3>
             {!small && (
               <p
-                className="mt-2 text-sm leading-relaxed"
+                className="mt-2 md:mt-3 text-xs md:text-sm leading-relaxed"
                 style={{ color: card.tone === "light" ? "#3a4254" : "#9aa3b8" }}
               >
                 {card.desc}
