@@ -98,8 +98,17 @@ function Header() {
   const handleNavClick = (e, link) => {
     e.preventDefault();
     setMenuOpen(false);
+
+    // The drawer pauses Lenis + locks body scroll while open. Re-enable both
+    // BEFORE scrolling, otherwise lenis.scrollTo is issued while stopped and
+    // silently ignored (the "menu link doesn't navigate" bug).
+    if (typeof document !== "undefined") document.body.style.overflow = "";
+    window.__lenis?.start?.();
+
     const id = link.href.replace("#", "");
-    scrollToSection(id, link.targetProgress);
+    // Defer a frame so Lenis is running again before the programmatic scroll.
+    requestAnimationFrame(() => scrollToSection(id, link.targetProgress));
+
     if (typeof history !== "undefined" && history.replaceState) {
       history.replaceState(null, "", link.href);
     }
