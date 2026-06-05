@@ -84,10 +84,10 @@ export function LandingServices() {
     <section id="skills" className="relative w-full py-28 md:py-40">
       <SectionBackdrop src="/profile4.png" position="left" opacity={0.2} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
-        {/* LEFT — pinned display. Heights are bounded (svh-based) so the whole
-            block fits on screen while sticky. */}
-        <div className="md:col-span-5">
-          <div className="md:sticky md:top-24">
+        {/* LEFT — pinned display. `sticky` lives on the grid item (with
+            self-start) so it pins across the whole section on BOTH desktop and
+            the single-column mobile layout. Heights are svh-bounded to fit. */}
+        <div className="md:col-span-5 self-start sticky top-20 md:top-24">
             <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-6">
               (02) — Capabilities
             </Reveal>
@@ -115,8 +115,8 @@ export function LandingServices() {
                 by opacity, so switching is instant with no load flash. Bounded
                 height keeps the card fully visible on screen. */}
             <div
-              className="mt-6 hidden md:block relative w-full overflow-hidden rounded-2xl bg-bg-soft"
-              style={{ height: "clamp(150px, 24svh, 250px)" }}
+              className="mt-5 md:mt-6 relative w-full overflow-hidden rounded-2xl bg-bg-soft"
+              style={{ height: "clamp(120px, 20svh, 250px)" }}
             >
               {CAPABILITIES.map((c, idx) => (
                 <img
@@ -138,7 +138,6 @@ export function LandingServices() {
                 {cap.tags.length} tools
               </span>
             </div>
-          </div>
         </div>
 
         {/* RIGHT — scrollable list; its scroll progress drives the active card */}
