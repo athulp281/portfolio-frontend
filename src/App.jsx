@@ -3,6 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { AppRoutes } from "@/routes/AppRoutes";
 import { Cursor } from "@/components/common/Cursor";
 import { ScrollProgress } from "@/components/common/ScrollProgress";
+import { Toaster } from "@/components/common/Toaster";
 import { IdentityLoader } from "@/components/boot/IdentityLoader";
 import { useBootStore, useThemeStore } from "@/store";
 import { useLenis } from "@/hooks/useLenis";
@@ -26,6 +27,7 @@ export default function App() {
       <ScrollProgress />
       <Cursor />
       <AppRoutes />
+      <Toaster />
       <AnimatePresence>
         {!ready && <IdentityLoader key="boot" onDone={finishBoot} />}
       </AnimatePresence>

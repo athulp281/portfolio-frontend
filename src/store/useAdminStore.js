@@ -1,11 +1,14 @@
 import { create } from "zustand";
 import seed from "@/data/selectedWork.json";
 import { useAuthStore } from "./useAuthStore";
+import { useUIStore } from "./useUIStore";
 import {
   adminLogin,
   fetchSelectedWork,
   saveSelectedWork,
 } from "@/services/admin.service";
+
+const toast = (t) => useUIStore.getState().pushToast(t);
 
 /**
  * Admin dashboard state for editing "Selected work".
@@ -28,7 +31,6 @@ export const useAdminStore = create((set, get) => ({
   items: [],
   status: "idle", // idle | loading | saving
   error: null,
-  notice: null,
   dirty: false,
   loaded: false,
   lastCommit: null,
@@ -39,8 +41,11 @@ export const useAdminStore = create((set, get) => ({
       const { token } = await adminLogin(email, password);
       useAuthStore.getState().setToken(token);
       set({ status: "idle" });
+      toast({ kind: "success", title: "Signed in" });
       return true;
     } catch (err) {
+      // The axios interceptor already snackbars the API error; we keep an
+      // inline message under the form too for context.
       set({ status: "idle", error: errMsg(err, "Login failed") });
       return false;
     }
@@ -48,11 +53,12 @@ export const useAdminStore = create((set, get) => ({
 
   logout: () => {
     useAuthStore.getState().clear();
-    set({ error: null, notice: null, loaded: false, items: [] });
+    set({ error: null, loaded: false, items: [] });
+    toast({ kind: "info", title: "Signed out" });
   },
 
   load: async () => {
-    set({ status: "loading", error: null, notice: null });
+    set({ status: "loading", error: null });
     try {
       const items = await fetchSelectedWork();
       set({
@@ -68,7 +74,11 @@ export const useAdminStore = create((set, get) => ({
         status: "idle",
         loaded: true,
         dirty: false,
-        notice: `Showing local data — backend unavailable (${errMsg(err, "error")}).`,
+      });
+      toast({
+        kind: "warning",
+        title: "Showing local data",
+        message: `Backend unavailable (${errMsg(err, "error")}).`,
       });
     }
   },
@@ -97,7 +107,7 @@ export const useAdminStore = create((set, get) => ({
     }),
 
   save: async (message) => {
-    set({ status: "saving", error: null, notice: null });
+    set({ status: "saving", error: null });
     try {
       const res = await saveSelectedWork(get().items, message);
       set({
@@ -105,11 +115,16 @@ export const useAdminStore = create((set, get) => ({
         dirty: false,
         items: reindexed(res?.items || get().items),
         lastCommit: res?.commit || null,
-        notice: "Saved & committed — Vercel is deploying to production.",
+      });
+      toast({
+        kind: "success",
+        title: "Saved & committed",
+        message: "Vercel is deploying to production (~1 min).",
       });
       return true;
     } catch (err) {
       // 401/403 already cleared the token via the axios interceptor → gate shows.
+      // The interceptor also snackbars the error; keep state for any inline use.
       set({ status: "idle", error: errMsg(err, "Save failed") });
       return false;
     }

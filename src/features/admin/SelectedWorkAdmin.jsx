@@ -10,8 +10,7 @@ import {
   Loader2,
   LogOut,
   Save,
-  Info,
-  AlertTriangle,
+  GitCommit,
 } from "lucide-react";
 import { useAdminStore } from "@/store";
 import { resolveIcon, resolveAccent } from "@/data/workMeta";
@@ -23,8 +22,6 @@ export function SelectedWorkAdmin() {
   const {
     items,
     status,
-    error,
-    notice,
     dirty,
     loaded,
     lastCommit,
@@ -105,35 +102,26 @@ export function SelectedWorkAdmin() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-8">
-        {/* Status banners */}
-        {error && (
-          <Banner tone="error" icon={AlertTriangle}>
-            {error}
-          </Banner>
-        )}
-        {notice && (
-          <Banner tone="info" icon={Info}>
-            {notice}
+        {/* Feedback (success/error/etc.) is shown via global snackbars. */}
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <p className="flex items-center gap-2 text-sm text-ink-dim">
+            <span>
+              {items.length} {items.length === 1 ? "item" : "items"}
+            </span>
+            {dirty && (
+              <span className="rounded-full bg-neon-pink/15 px-2 py-0.5 text-[11px] text-neon-pink">
+                unsaved changes
+              </span>
+            )}
             {lastCommit?.commitUrl && (
               <a
                 href={lastCommit.commitUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="ml-2 underline hover:text-ink"
+                className="inline-flex items-center gap-1 text-[11px] text-ink-mute underline-offset-2 hover:text-ink hover:underline"
               >
-                view commit
+                <GitCommit className="size-3" /> last deploy
               </a>
-            )}
-          </Banner>
-        )}
-
-        <div className="mb-5 flex items-center justify-between">
-          <p className="text-sm text-ink-dim">
-            {items.length} {items.length === 1 ? "item" : "items"}
-            {dirty && (
-              <span className="ml-2 rounded-full bg-neon-pink/15 px-2 py-0.5 text-[11px] text-neon-pink">
-                unsaved changes
-              </span>
             )}
           </p>
           <Button size="sm" variant="ghost" onClick={() => setEditing("new")}>
@@ -285,22 +273,6 @@ function IconBtn({ children, danger, className, ...props }) {
     >
       {children}
     </button>
-  );
-}
-
-function Banner({ tone, icon: Icon, children }) {
-  return (
-    <div
-      className={cn(
-        "mb-5 flex items-start gap-2 rounded-xl border px-4 py-3 text-sm",
-        tone === "error"
-          ? "border-neon-pink/30 bg-neon-pink/10 text-neon-pink"
-          : "border-neon-cyan/30 bg-neon-cyan/10 text-neon-cyan",
-      )}
-    >
-      <Icon className="mt-0.5 size-4 shrink-0" />
-      <div>{children}</div>
-    </div>
   );
 }
 
