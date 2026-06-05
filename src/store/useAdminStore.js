@@ -38,8 +38,9 @@ export const useAdminStore = create((set, get) => ({
   login: async (email, password) => {
     set({ status: "loading", error: null });
     try {
-      const { token } = await adminLogin(email, password);
+      const { token, email: who } = await adminLogin(email, password);
       useAuthStore.getState().setToken(token);
+      useAuthStore.getState().setUser({ email: who || email });
       set({ status: "idle" });
       toast({ kind: "success", title: "Signed in" });
       return true;

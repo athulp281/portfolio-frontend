@@ -8,7 +8,6 @@ import {
   ArrowDown,
   ExternalLink,
   Loader2,
-  LogOut,
   Save,
   GitCommit,
 } from "lucide-react";
@@ -31,7 +30,6 @@ export function SelectedWorkAdmin() {
     removeItem,
     moveItem,
     save,
-    logout,
   } = useAdminStore();
 
   // null = closed, "new" = adding, otherwise the item being edited
@@ -56,7 +54,7 @@ export function SelectedWorkAdmin() {
     <div className="min-h-[100dvh] bg-bg text-ink">
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-white/10 bg-bg/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 py-4 pl-16 pr-4 sm:pr-6 lg:px-6">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-mute">
               Admin
@@ -90,13 +88,6 @@ export function SelectedWorkAdmin() {
                 </>
               )}
             </Button>
-            <button
-              onClick={logout}
-              className="grid place-items-center size-9 rounded-lg border border-white/10 text-ink-dim hover:text-ink"
-              title="Log out"
-            >
-              <LogOut className="size-4" />
-            </button>
           </div>
         </div>
       </header>

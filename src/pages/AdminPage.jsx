@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/store";
 import { AdminGate } from "@/features/admin/AdminGate";
+import { AdminLayout } from "@/features/admin/AdminLayout";
 import { SelectedWorkAdmin } from "@/features/admin/SelectedWorkAdmin";
 
 /**
@@ -10,5 +11,10 @@ import { SelectedWorkAdmin } from "@/features/admin/SelectedWorkAdmin";
  */
 export default function AdminPage() {
   const token = useAuthStore((s) => s.token);
-  return token ? <SelectedWorkAdmin /> : <AdminGate />;
+  if (!token) return <AdminGate />;
+  return (
+    <AdminLayout active="selected-work">
+      <SelectedWorkAdmin />
+    </AdminLayout>
+  );
 }
