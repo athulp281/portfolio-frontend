@@ -78,5 +78,16 @@
     "grad": "from-neon-lime to-neon-cyan",
     "icon": "Boxes",
     "img": "/new%20images/software-developer-working-stockcake.webp"
+  },
+  {
+    "id": "test",
+    "title": "test",
+    "desc": "testing",
+    "tags": [
+      "dev tool"
+    ],
+    "grad": "from-neon-lime to-neon-cyan",
+    "icon": "ShieldCheck",
+    "img": "/uploads/software-developer-working-stockcake-mq0y5kcn.webp"
   }
 ]
