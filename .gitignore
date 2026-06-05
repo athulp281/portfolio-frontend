@@ -75,3 +75,6 @@ bun.lockb
 public/1.png
 public/2.png
 public/herodemo.mp4
+
+# local reference asset (not committed)
+public/loginref.mp4
