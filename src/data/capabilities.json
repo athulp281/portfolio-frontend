@@ -1,0 +1,47 @@
+[
+  {
+    "id": "project-management",
+    "title": "Project Management",
+    "desc": "Scoping, planning and shipping with agile workflows, clear roadmaps and code review.",
+    "tags": ["Agile", "Scrum", "Jira", "Roadmaps", "Code review", "Mentoring"],
+    "grad": "from-neon-cyan to-neon-pink",
+    "icon": "ClipboardList",
+    "img": "/new%20images/1710486640359.jpg"
+  },
+  {
+    "id": "frontend",
+    "title": "Frontend",
+    "desc": "Design-led React & Next.js interfaces with motion as a first-class citizen.",
+    "tags": ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion", "Three.js"],
+    "grad": "from-neon-cyan to-neon-violet",
+    "icon": "Layers",
+    "img": "/new%20images/canva-software-developer-working.jpg"
+  },
+  {
+    "id": "backend",
+    "title": "Backend",
+    "desc": "Typed APIs, auth, RBAC and real-time services that hold up in production.",
+    "tags": ["Node.js", "Express", "Prisma", "Sequelize", "Socket.IO", "Firebase"],
+    "grad": "from-neon-violet to-neon-pink",
+    "icon": "Server",
+    "img": "/new%20images/comprehensive-guide-czmq-mv1njzs8.jpg"
+  },
+  {
+    "id": "ai-data",
+    "title": "AI & Data",
+    "desc": "RAG pipelines, embeddings and vector search wired into real product flows.",
+    "tags": ["OpenAI", "RAG", "Embeddings", "Vector search", "MySQL", "MongoDB"],
+    "grad": "from-neon-pink to-neon-cyan",
+    "icon": "Cpu",
+    "img": "/new%20images/young-contemporary-software-developer-working-by-computer_274679-30538.avif"
+  },
+  {
+    "id": "devops",
+    "title": "DevOps",
+    "desc": "Build tooling and deploys across Vercel, Render and bare-metal hosts.",
+    "tags": ["Vite", "Webpack", "Vercel", "Netlify", "Render", "DigitalOcean"],
+    "grad": "from-neon-lime to-neon-cyan",
+    "icon": "Boxes",
+    "img": "/new%20images/software-developer-working-stockcake.webp"
+  }
+]

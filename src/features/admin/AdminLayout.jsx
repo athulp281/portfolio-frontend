@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FolderGit2,
+  Layers,
   LayoutDashboard,
   MessagesSquare,
   Settings,
@@ -24,6 +25,7 @@ import { cn } from "@/utils/cn";
  */
 const NAV = [
   { key: "selected-work", label: "Selected Work", icon: FolderGit2, available: true },
+  { key: "capabilities", label: "Capabilities", icon: Layers, available: true },
   { key: "overview", label: "Overview", icon: LayoutDashboard, available: false },
   { key: "messages", label: "Messages", icon: MessagesSquare, available: false },
   { key: "settings", label: "Settings", icon: Settings, available: false },

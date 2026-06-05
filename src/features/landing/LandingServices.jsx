@@ -5,60 +5,25 @@ import {
   useSpring,
   useMotionValueEvent,
 } from "framer-motion";
-import { Layers, Server, Cpu, Boxes, ClipboardList } from "lucide-react";
 import { Reveal } from "@/components/common/Reveal";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
+import capabilitiesData from "@/data/capabilities.json";
+import { resolveCapIcon, resolveGrad } from "@/data/capabilityMeta";
 
 const easing = [0.16, 1, 0.3, 1];
 
-// Image paths use %20 for the space in the "new images" public folder.
-const CAPABILITIES = [
-  {
-    no: "01",
-    title: "Project Management",
-    desc: "Scoping, planning and shipping with agile workflows, clear roadmaps and code review.",
-    tags: ["Agile", "Scrum", "Jira", "Roadmaps", "Code review", "Mentoring"],
-    grad: "from-neon-cyan to-neon-pink",
-    icon: ClipboardList,
-    img: "/new%20images/1710486640359.jpg",
-  },
-  {
-    no: "02",
-    title: "Frontend",
-    desc: "Design-led React & Next.js interfaces with motion as a first-class citizen.",
-    tags: ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion", "Three.js"],
-    grad: "from-neon-cyan to-neon-violet",
-    icon: Layers,
-    img: "/new%20images/canva-software-developer-working.jpg",
-  },
-  {
-    no: "03",
-    title: "Backend",
-    desc: "Typed APIs, auth, RBAC and real-time services that hold up in production.",
-    tags: ["Node.js", "Express", "Prisma", "Sequelize", "Socket.IO", "Firebase"],
-    grad: "from-neon-violet to-neon-pink",
-    icon: Server,
-    img: "/new%20images/comprehensive-guide-czmq-mv1njzs8.jpg",
-  },
-  {
-    no: "04",
-    title: "AI & Data",
-    desc: "RAG pipelines, embeddings and vector search wired into real product flows.",
-    tags: ["OpenAI", "RAG", "Embeddings", "Vector search", "MySQL", "MongoDB"],
-    grad: "from-neon-pink to-neon-cyan",
-    icon: Cpu,
-    img: "/new%20images/young-contemporary-software-developer-working-by-computer_274679-30538.avif",
-  },
-  {
-    no: "05",
-    title: "DevOps",
-    desc: "Build tooling and deploys across Vercel, Render and bare-metal hosts.",
-    tags: ["Vite", "Webpack", "Vercel", "Netlify", "Render", "DigitalOcean"],
-    grad: "from-neon-lime to-neon-cyan",
-    icon: Boxes,
-    img: "/new%20images/software-developer-working-stockcake.webp",
-  },
-];
+/**
+ * Capabilities come from `src/data/capabilities.json` (the single source of
+ * truth the /admin Capabilities panel edits). The display number is derived
+ * from order, and icon/gradient resolve through capabilityMeta so admin-added
+ * entries render correctly.
+ */
+const CAPABILITIES = capabilitiesData.map((c, i) => ({
+  ...c,
+  no: String(i + 1).padStart(2, "0"),
+  Icon: resolveCapIcon(c.icon),
+  gradClass: resolveGrad(c.grad),
+}));
 
 /**
  * Capabilities — a "now-showing" split. The left column is pinned (sticky) and
@@ -141,10 +106,10 @@ export function LandingServices() {
                 />
               ))}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${cap.grad} opacity-55 mix-blend-multiply`}
+                className={`absolute inset-0 bg-gradient-to-br ${cap.gradClass} opacity-55 mix-blend-multiply`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-              <cap.icon className="absolute right-6 bottom-6 size-11 text-white drop-shadow" />
+              <cap.Icon className="absolute right-6 bottom-6 size-11 text-white drop-shadow" />
               <span className="absolute left-6 top-6 font-mono text-[10px] uppercase tracking-[0.25em] text-white/90">
                 {cap.tags.length} tools
               </span>

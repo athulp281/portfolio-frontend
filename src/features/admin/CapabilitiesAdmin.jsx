@@ -6,18 +6,17 @@ import {
   Trash2,
   ArrowUp,
   ArrowDown,
-  ExternalLink,
   Loader2,
   Save,
   GitCommit,
 } from "lucide-react";
-import { useSelectedWorkStore } from "@/store";
-import { resolveIcon, resolveAccent } from "@/data/workMeta";
+import { useCapabilityStore } from "@/store";
+import { resolveCapIcon, resolveGrad } from "@/data/capabilityMeta";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/utils/cn";
-import { WorkForm } from "./WorkForm";
+import { CapabilityForm } from "./CapabilityForm";
 
-export function SelectedWorkAdmin() {
+export function CapabilitiesAdmin() {
   const {
     items,
     status,
@@ -30,10 +29,9 @@ export function SelectedWorkAdmin() {
     removeItem,
     moveItem,
     save,
-  } = useSelectedWorkStore();
+  } = useCapabilityStore();
 
-  // null = closed, "new" = adding, otherwise the item being edited
-  const [editing, setEditing] = useState(null);
+  const [editing, setEditing] = useState(null); // null | "new" | item
   const [confirmId, setConfirmId] = useState(null);
 
   useEffect(() => {
@@ -52,7 +50,6 @@ export function SelectedWorkAdmin() {
 
   return (
     <div className="min-h-[100dvh] bg-bg text-ink">
-      {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-white/10 bg-bg/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 py-4 pl-16 pr-4 sm:pr-6 lg:px-6">
           <div>
@@ -60,18 +57,10 @@ export function SelectedWorkAdmin() {
               Admin
             </div>
             <h1 className="font-display text-xl font-semibold tracking-tight">
-              Selected work
+              Capabilities
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <a
-              href="/#work"
-              target="_blank"
-              rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs text-ink-dim hover:text-ink"
-            >
-              View site <ExternalLink className="size-3.5" />
-            </a>
             <Button
               size="sm"
               onClick={() => save()}
@@ -93,11 +82,10 @@ export function SelectedWorkAdmin() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-8">
-        {/* Feedback (success/error/etc.) is shown via global snackbars. */}
         <div className="mb-5 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 text-sm text-ink-dim">
             <span>
-              {items.length} {items.length === 1 ? "item" : "items"}
+              {items.length} {items.length === 1 ? "capability" : "capabilities"}
             </span>
             {dirty && (
               <span className="rounded-full bg-neon-pink/15 px-2 py-0.5 text-[11px] text-neon-pink">
@@ -116,7 +104,7 @@ export function SelectedWorkAdmin() {
             )}
           </p>
           <Button size="sm" variant="ghost" onClick={() => setEditing("new")}>
-            <Plus className="size-4" /> Add work
+            <Plus className="size-4" /> Add capability
           </Button>
         </div>
 
@@ -128,7 +116,7 @@ export function SelectedWorkAdmin() {
           <ul className="space-y-3">
             <AnimatePresence initial={false}>
               {items.map((item, i) => (
-                <WorkRow
+                <CapRow
                   key={item.id}
                   item={item}
                   index={i}
@@ -141,17 +129,16 @@ export function SelectedWorkAdmin() {
             </AnimatePresence>
             {!items.length && (
               <li className="rounded-xl border border-dashed border-white/10 py-16 text-center text-ink-mute">
-                No work yet. Click “Add work” to create the first item.
+                No capabilities yet. Click “Add capability” to create the first one.
               </li>
             )}
           </ul>
         )}
       </main>
 
-      {/* Add / edit modal */}
       <AnimatePresence>
         {editing && (
-          <WorkForm
+          <CapabilityForm
             key="form"
             initial={editing === "new" ? null : editing}
             existingIds={existingIds}
@@ -161,7 +148,6 @@ export function SelectedWorkAdmin() {
         )}
       </AnimatePresence>
 
-      {/* Delete confirm */}
       <AnimatePresence>
         {confirmId && (
           <ConfirmDelete
@@ -178,8 +164,8 @@ export function SelectedWorkAdmin() {
   );
 }
 
-function WorkRow({ item, index, total, onEdit, onDelete, onMove }) {
-  const Icon = resolveIcon(item.icon);
+function CapRow({ item, index, total, onEdit, onDelete, onMove }) {
+  const Icon = resolveCapIcon(item.icon);
   return (
     <motion.li
       layout
@@ -188,24 +174,22 @@ function WorkRow({ item, index, total, onEdit, onDelete, onMove }) {
       exit={{ opacity: 0, x: -12 }}
       className="flex items-center gap-4 rounded-xl border border-white/10 bg-bg-soft p-3"
     >
-      <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-bg">
-        {item.image ? (
+      <div className="relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10 bg-bg">
+        {item.img ? (
           <img
-            src={item.image}
+            src={item.img}
             alt=""
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover opacity-70"
             onError={(e) => (e.currentTarget.style.opacity = "0")}
           />
         ) : null}
         <span
           className={cn(
-            "absolute inset-0 bg-gradient-to-tr opacity-30",
-            resolveAccent(item.accent),
+            "absolute inset-0 bg-gradient-to-br opacity-40",
+            resolveGrad(item.grad),
           )}
         />
-        <span className="absolute inset-0 grid place-items-center text-white">
-          <Icon className="size-5" />
-        </span>
+        <Icon className="relative size-5 text-white" />
       </div>
 
       <div className="min-w-0 flex-1">
@@ -213,9 +197,9 @@ function WorkRow({ item, index, total, onEdit, onDelete, onMove }) {
           <h3 className="truncate font-medium text-ink">{item.title}</h3>
           <span className="font-mono text-[10px] text-ink-mute">{item.id}</span>
         </div>
-        <p className="truncate text-sm text-ink-dim">{item.summary}</p>
+        <p className="truncate text-sm text-ink-dim">{item.desc}</p>
         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-          {(item.stack || []).slice(0, 5).map((t) => (
+          {(item.tags || []).slice(0, 6).map((t) => (
             <span
               key={t}
               className="font-mono text-[10px] uppercase tracking-wide text-ink-mute"
@@ -227,18 +211,10 @@ function WorkRow({ item, index, total, onEdit, onDelete, onMove }) {
       </div>
 
       <div className="flex items-center gap-1">
-        <IconBtn
-          title="Move up"
-          disabled={index === 0}
-          onClick={() => onMove(-1)}
-        >
+        <IconBtn title="Move up" disabled={index === 0} onClick={() => onMove(-1)}>
           <ArrowUp className="size-4" />
         </IconBtn>
-        <IconBtn
-          title="Move down"
-          disabled={index === total - 1}
-          onClick={() => onMove(1)}
-        >
+        <IconBtn title="Move down" disabled={index === total - 1} onClick={() => onMove(1)}>
           <ArrowDown className="size-4" />
         </IconBtn>
         <IconBtn title="Edit" onClick={onEdit}>
@@ -256,8 +232,8 @@ function IconBtn({ children, danger, className, ...props }) {
   return (
     <button
       className={cn(
-        "grid place-items-center size-8 rounded-lg border border-white/10 text-ink-dim transition hover:text-ink disabled:opacity-30 disabled:hover:text-ink-dim",
-        danger && "hover:text-neon-pink hover:border-neon-pink/40",
+        "grid size-8 place-items-center rounded-lg border border-white/10 text-ink-dim transition hover:text-ink disabled:opacity-30 disabled:hover:text-ink-dim",
+        danger && "hover:border-neon-pink/40 hover:text-neon-pink",
         className,
       )}
       {...props}
@@ -276,7 +252,7 @@ function ConfirmDelete({ name, onConfirm, onCancel }) {
         animate={{ opacity: 1, scale: 1 }}
         className="relative w-full max-w-sm rounded-2xl border border-white/10 bg-bg-panel p-6 shadow-glass"
       >
-        <h3 className="font-display text-lg font-semibold text-ink">Delete work?</h3>
+        <h3 className="font-display text-lg font-semibold text-ink">Delete capability?</h3>
         <p className="mt-2 text-sm text-ink-dim">
           “{name}” will be removed from the list. This is undone only by editing
           again before you save.

@@ -5,3 +5,5 @@ export { useProjectStore } from "./useProjectStore";
 export { useBootStore } from "./useBootStore";
 export { useThemeStore } from "./useThemeStore";
 export { useAdminStore } from "./useAdminStore";
+export { useSelectedWorkStore } from "./useSelectedWorkStore";
+export { useCapabilityStore } from "./useCapabilityStore";
