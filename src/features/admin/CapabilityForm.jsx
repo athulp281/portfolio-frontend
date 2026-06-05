@@ -9,6 +9,7 @@ import {
 } from "@/data/capabilityMeta";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/utils/cn";
+import { ImageField } from "./ImageField";
 
 function slugify(str) {
   return str
@@ -177,25 +178,12 @@ export function CapabilityForm({ initial, existingIds = [], onSubmit, onCancel }
             </div>
           </div>
 
-          <div>
-            <label className={LABEL}>Image (path or URL)</label>
-            <input
-              className={FIELD}
-              value={form.img}
-              onChange={(e) => set({ img: e.target.value })}
-              placeholder="/new%20images/canva-software-developer-working.jpg"
-            />
-            {form.img && (
-              <div className="mt-2 aspect-[16/9] w-32 overflow-hidden rounded-lg border border-white/10">
-                <img
-                  src={form.img}
-                  alt="preview"
-                  className="h-full w-full object-cover"
-                  onError={(e) => (e.currentTarget.style.opacity = "0.2")}
-                />
-              </div>
-            )}
-          </div>
+          <ImageField
+            label="Image"
+            value={form.img}
+            onChange={(v) => set({ img: v })}
+            placeholder="/uploads/your-image.jpg"
+          />
 
           {error && <p className="text-sm text-neon-pink">{error}</p>}
         </div>

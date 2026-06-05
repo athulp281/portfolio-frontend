@@ -9,6 +9,7 @@ import {
 } from "@/data/workMeta";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/utils/cn";
+import { ImageField } from "./ImageField";
 
 function slugify(str) {
   return str
@@ -189,25 +190,12 @@ export function WorkForm({ initial, existingIds = [], onSubmit, onCancel }) {
             </div>
           </div>
 
-          <div>
-            <label className={LABEL}>Image (path or URL)</label>
-            <input
-              className={FIELD}
-              value={form.image}
-              onChange={(e) => set({ image: e.target.value })}
-              placeholder="/projectimages/studentportal.png"
-            />
-            {form.image && (
-              <div className="mt-2 aspect-[16/9] w-32 overflow-hidden rounded-lg border border-white/10">
-                <img
-                  src={form.image}
-                  alt="preview"
-                  className="h-full w-full object-cover"
-                  onError={(e) => (e.currentTarget.style.opacity = "0.2")}
-                />
-              </div>
-            )}
-          </div>
+          <ImageField
+            label="Image"
+            value={form.image}
+            onChange={(v) => set({ image: v })}
+            placeholder="/projectimages/studentportal.png"
+          />
 
           <div>
             <label className={LABEL}>Link (project URL)</label>

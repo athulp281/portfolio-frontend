@@ -27,3 +27,22 @@ export async function saveContent(resource, items, message) {
   const res = await api.post(`/admin/content/${resource}`, { items, message });
   return unwrap(res); // { items, commit }
 }
+
+function readAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Upload an image file — committed into the repo's public uploads dir by the
+ * backend. Returns { url, commit }; the url is live after the next deploy.
+ */
+export async function uploadImage(file) {
+  const dataUrl = await readAsDataUrl(file);
+  const res = await api.post("/admin/upload", { filename: file.name, dataUrl });
+  return unwrap(res); // { url, commit }
+}
