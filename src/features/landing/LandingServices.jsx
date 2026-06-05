@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Layers, Server, Cpu, Boxes, ClipboardList } from "lucide-react";
 import { Reveal } from "@/components/common/Reveal";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
@@ -64,6 +64,21 @@ const CAPABILITIES = [
 export function LandingServices() {
   const [active, setActive] = useState(0);
   const cap = CAPABILITIES[active];
+  const listRef = useRef(null);
+
+  // Drive the active card from the list's scroll progress — smooth and
+  // deterministic (no per-item viewport callbacks fighting each other).
+  const { scrollYProgress } = useScroll({
+    target: listRef,
+    offset: ["start center", "end center"],
+  });
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const i = Math.min(
+      CAPABILITIES.length - 1,
+      Math.max(0, Math.floor(v * CAPABILITIES.length)),
+    );
+    setActive((prev) => (prev !== i ? i : prev));
+  });
 
   return (
     <section id="skills" className="relative w-full py-28 md:py-40">
@@ -77,25 +92,24 @@ export function LandingServices() {
               (02) — Capabilities
             </Reveal>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={cap.title}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.35, ease: easing }}
-              >
-                <div className="font-display font-semibold leading-none text-ink/12 text-[clamp(3.5rem,7vw,7rem)]">
-                  {cap.no}
-                </div>
-                <h2 className="-mt-2 font-display font-semibold tracking-[-0.03em] text-ink text-[clamp(2rem,4.2vw,3.25rem)]">
-                  {cap.title}
-                </h2>
-                <p className="mt-3 max-w-sm text-ink-dim text-sm md:text-base leading-relaxed">
-                  {cap.desc}
-                </p>
-              </motion.div>
-            </AnimatePresence>
+            {/* Keyed remount = quick fade-in on change, with NO exit-wait
+                blocking (which made fast scrolling feel stuck). */}
+            <motion.div
+              key={cap.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: easing }}
+            >
+              <div className="font-display font-semibold leading-none text-ink/12 text-[clamp(3.5rem,7vw,7rem)]">
+                {cap.no}
+              </div>
+              <h2 className="-mt-2 font-display font-semibold tracking-[-0.03em] text-ink text-[clamp(2rem,4.2vw,3.25rem)]">
+                {cap.title}
+              </h2>
+              <p className="mt-3 max-w-sm text-ink-dim text-sm md:text-base leading-relaxed">
+                {cap.desc}
+              </p>
+            </motion.div>
 
             {/* accent panel — ALL images stay mounted (preloaded) and crossfade
                 by opacity, so switching is instant with no load flash. Bounded
@@ -127,16 +141,15 @@ export function LandingServices() {
           </div>
         </div>
 
-        {/* RIGHT — scrollable list drives the active index */}
-        <div className="md:col-span-7 md:pt-16">
+        {/* RIGHT — scrollable list; its scroll progress drives the active card */}
+        <div className="md:col-span-7 md:pt-16" ref={listRef}>
           <div className="border-t border-line/12">
             {CAPABILITIES.map((c, i) => (
               <motion.div
                 key={c.title}
-                onViewportEnter={() => setActive(i)}
-                viewport={{ amount: 0.6, margin: "-20% 0px -20% 0px" }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, ease: easing }}
                 className="border-b border-line/12 py-10 md:py-14"
               >

@@ -1,185 +1,182 @@
-import { useState } from "react";
+import { useRef } from "react";
 import {
   motion,
-  AnimatePresence,
-  useMotionValue,
+  useScroll,
   useSpring,
+  useTransform,
+  cubicBezier,
 } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import { useProjectStore } from "@/store";
-import { Reveal } from "@/components/common/Reveal";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 import { cn } from "@/utils/cn";
 
-const easing = [0.16, 1, 0.3, 1];
+// Must be an easing FUNCTION (not a raw bezier array) for useTransform's
+// `ease` option on multi-segment ranges.
+const easeIO = cubicBezier(0.65, 0, 0.35, 1);
+
+// Stock imagery for the card faces (cycled across projects by index).
+const PROJECT_IMAGES = [
+  "/new%20images/canva-software-developer-working.jpg",
+  "/new%20images/comprehensive-guide-czmq-mv1njzs8.jpg",
+  "/new%20images/software-developer-working-stockcake.webp",
+  "/new%20images/young-contemporary-software-developer-working-by-computer_274679-30538.avif",
+];
 
 /**
- * Selected work — an editorial index of oversized project titles on hairline
- * dividers (no boxes). Hovering a row lifts a poster preview that tracks the
- * cursor; the title slides and brightens. Mobile shows the poster inline.
+ * Selected work — a pinned card-deck "deal". The projects sit as a centred
+ * stack; scrolling deals the front card off (rotate + slide away, alternating
+ * sides) to reveal the next. A cinematic, scroll-driven reveal that's distinct
+ * from the hero's split-and-flip.
  */
 export function LandingWork() {
   const projects = useProjectStore((s) => s.projects);
-  const [active, setActive] = useState(null);
+  const sectionRef = useRef(null);
+  const n = projects.length;
 
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const px = useSpring(mx, { stiffness: 350, damping: 30, mass: 0.4 });
-  const py = useSpring(my, { stiffness: 350, damping: 30, mass: 0.4 });
-  const onMove = (e) => {
-    mx.set(e.clientX);
-    my.set(e.clientY);
-  };
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const p = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 28,
+    mass: 0.5,
+  });
 
   return (
     <section
+      ref={sectionRef}
       id="work"
-      onMouseMove={onMove}
-      className="relative w-full py-28 md:py-40"
+      className="relative"
+      style={{ height: `${Math.max(300, n * 62)}svh` }}
     >
-      <SectionBackdrop src="/profile3.png" position="right" opacity={0.24} />
-      <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
-        <Reveal className="flex items-end justify-between gap-6 mb-14 md:mb-20">
+      <SectionBackdrop src="/profile3.png" position="right" opacity={0.18} />
+
+      <div className="sticky top-0 h-[100svh] overflow-hidden flex flex-col">
+        <div className="mx-auto w-full max-w-7xl px-6 md:px-10 pt-24 md:pt-28 flex items-end justify-between gap-6">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute">
               (03) — Selected work
             </div>
-            <h2 className="mt-5 font-display font-semibold tracking-[-0.03em] leading-[0.95] text-ink text-[clamp(2.5rem,8vw,6.5rem)]">
+            <h2 className="mt-4 font-display font-semibold tracking-[-0.03em] leading-[0.95] text-ink text-[clamp(2rem,6vw,4.5rem)]">
               Things I've shipped
             </h2>
           </div>
-          <span className="hidden sm:block font-mono text-[11px] uppercase tracking-[0.3em] text-ink-mute pb-3">
-            {String(projects.length).padStart(2, "0")} projects
+          <span className="hidden sm:block font-mono text-[11px] uppercase tracking-[0.3em] text-ink-mute pb-2">
+            {String(n).padStart(2, "0")} projects
           </span>
-        </Reveal>
+        </div>
 
-        <div className="border-t border-line/12">
+        {/* Deck stage */}
+        <div className="relative flex-1" style={{ perspective: 1500 }}>
           {projects.map((project, i) => (
-            <WorkRow
+            <DealCard
               key={project.id}
               project={project}
               index={i}
-              onEnter={() => setActive(i)}
-              onLeave={() => setActive(null)}
+              total={n}
+              p={p}
+              image={PROJECT_IMAGES[i % PROJECT_IMAGES.length]}
             />
           ))}
         </div>
       </div>
-
-      {/* cursor-tracked poster (desktop) */}
-      <motion.div
-        aria-hidden
-        style={{ left: px, top: py }}
-        className="pointer-events-none fixed z-40 hidden md:block -translate-x-1/2 -translate-y-1/2"
-      >
-        <AnimatePresence>
-          {active !== null && (
-            <motion.div
-              key={projects[active].id}
-              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-              animate={{ opacity: 1, scale: 1, rotate: -5 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.35, ease: easing }}
-              className="w-[320px] h-[230px] overflow-hidden rounded-xl"
-            >
-              <Poster project={projects[active]} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
     </section>
   );
 }
 
-function WorkRow({ project, index, onEnter, onLeave }) {
-  const [hover, setHover] = useState(false);
+function DealCard({ project, index, total, p, image }) {
+  const last = index === total - 1;
+  const a = index / total; // deal-off start
+  const b = (index + 1) / total; // deal-off end
+  const dir = index % 2 === 0 ? 1 : -1;
 
-  return (
-    <motion.a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      onMouseEnter={() => {
-        setHover(true);
-        onEnter();
-      }}
-      onMouseLeave={() => {
-        setHover(false);
-        onLeave();
-      }}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.7, ease: easing, delay: index * 0.05 }}
-      data-cursor-label="View"
-      className="group relative block border-b border-line/12"
-    >
-      <div className="flex items-center gap-5 md:gap-10 py-7 md:py-12">
-        <span className="font-mono text-xs md:text-sm text-ink-mute w-8 md:w-14 shrink-0">
-          {String(index + 1).padStart(2, "0")}
-        </span>
+  // Rest pose: a subtle stack peek; the final card rests dead-centre.
+  const restRot = last ? 0 : index * -1.6;
+  const restY = last ? 0 : index * 1.4; // %
+  const restScale = last ? 1 : 1 - index * 0.02;
 
-        <motion.h3
-          className="flex-1 min-w-0 font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[clamp(1.8rem,6.5vw,5rem)]"
-          animate={{ x: hover ? 18 : 0, color: hover ? "#e6e9f2" : "#9aa3b8" }}
-          transition={{ duration: 0.45, ease: easing }}
-        >
-          {project.title}
-        </motion.h3>
+  // Monotonic input ranges (handle the index-0 case where a === 0).
+  const inRange = a === 0 ? [a, b, 1] : [0, a, b, 1];
+  const seq = (rest, dealt) =>
+    a === 0 ? [rest, dealt, dealt] : [rest, rest, dealt, dealt];
+  const opRange = a === 0 ? [a, b] : [0, a, b];
+  const opSeq = a === 0 ? [1, 0] : [1, 1, 0];
 
-        <span className="hidden lg:block font-mono text-[11px] uppercase tracking-[0.2em] text-ink-mute max-w-[14rem] text-right">
-          {project.stack.slice(0, 3).join("  ·  ")}
-        </span>
-
-        <motion.span
-          aria-hidden
-          className="hidden md:grid place-items-center size-12 rounded-full border border-line/15 shrink-0"
-          animate={{
-            rotate: hover ? 45 : 0,
-            borderColor: hover ? "rgba(230,233,242,0.6)" : "rgba(255,255,255,0.15)",
-            color: hover ? "#e6e9f2" : "#5b647a",
-          }}
-          transition={{ duration: 0.45, ease: easing }}
-        >
-          <ArrowUpRight className="size-5" />
-        </motion.span>
-      </div>
-
-      {/* inline poster on mobile */}
-      <div className="md:hidden pb-7">
-        <div className="h-44 overflow-hidden rounded-lg">
-          <Poster project={project} />
-        </div>
-        <p className="mt-3 text-ink-dim text-sm leading-relaxed">
-          {project.summary}
-        </p>
-      </div>
-    </motion.a>
+  const x = useTransform(
+    p,
+    last ? [0, 1] : inRange,
+    last ? ["0%", "0%"] : seq("0%", `${dir * 130}%`),
+    { ease: easeIO },
   );
-}
+  const y = useTransform(
+    p,
+    last ? [0, 1] : inRange,
+    last ? ["0%", "0%"] : seq(`${restY}%`, "-9%"),
+    { ease: easeIO },
+  );
+  const rotateZ = useTransform(
+    p,
+    last ? [0, 1] : inRange,
+    last ? [restRot, restRot] : seq(restRot, dir * 22),
+    { ease: easeIO },
+  );
+  const scale = useTransform(
+    p,
+    last ? [0, 1] : inRange,
+    last ? [restScale, restScale] : seq(restScale, restScale),
+  );
+  const opacity = useTransform(p, last ? [0, 1] : opRange, last ? [1, 1] : opSeq);
 
-/** Poster — gradient placeholder built from the project's accent gradient. */
-function Poster({ project }) {
   return (
+    // Centering on the wrapper (plain CSS) — framer owns transform on the card.
     <div
-      className={cn(
-        "relative h-full w-full bg-gradient-to-br p-5 flex flex-col justify-between",
-        project.accent,
-      )}
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+      style={{ zIndex: total - index }}
     >
-      <div className="absolute inset-0 bg-bg/30" />
-      <div className="absolute inset-0 grid-bg opacity-25" />
-      <div className="relative flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-bg/90">
-        <span>{project.id}</span>
-        <span>↗</span>
-      </div>
-      <div className="relative">
-        <h4 className="font-display font-semibold text-bg text-xl leading-tight drop-shadow">
-          {project.title}
-        </h4>
-        <p className="mt-1.5 text-bg/80 text-[11px] leading-snug line-clamp-2">
-          {project.summary}
-        </p>
-      </div>
+      <motion.article
+        style={{ x, y, rotateZ, scale, opacity }}
+        className="w-[clamp(290px,74vw,540px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
+        data-cursor-label="View"
+      >
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <img
+            src={image}
+            alt={project.title}
+            draggable={false}
+            className="h-full w-full object-cover"
+          />
+          <div
+            className={cn(
+              "absolute inset-0 bg-gradient-to-tr opacity-40 mix-blend-multiply",
+              project.accent,
+            )}
+          />
+          <div className="absolute inset-0 bg-black/15" />
+          <span className="absolute top-4 left-5 font-mono text-[11px] uppercase tracking-[0.3em] text-white/90">
+            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          </span>
+        </div>
+
+        <div className="p-5 md:p-7">
+          <h3 className="font-display font-semibold tracking-[-0.02em] text-2xl md:text-3xl text-ink">
+            {project.title}
+          </h3>
+          <p className="mt-2 text-ink-dim text-sm md:text-[15px] leading-relaxed">
+            {project.summary}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
+            {project.stack.map((t) => (
+              <span
+                key={t}
+                className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-mute"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.article>
     </div>
   );
 }
