@@ -6,7 +6,16 @@ import {
   useTransform,
   cubicBezier,
 } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  Globe,
+  GraduationCap,
+  ShieldCheck,
+  Users,
+  ClipboardCheck,
+  CalendarCheck,
+  Search,
+} from "lucide-react";
 import { useProjectStore } from "@/store";
 import { SectionBackdrop } from "@/components/common/SectionBackdrop";
 import { cn } from "@/utils/cn";
@@ -14,6 +23,17 @@ import { cn } from "@/utils/cn";
 // Must be an easing FUNCTION (not a raw bezier array) for useTransform's
 // `ease` option on multi-segment ranges.
 const easeIO = cubicBezier(0.65, 0, 0.35, 1);
+
+// A fitting icon per project, shown centred on the card image.
+const PROJECT_ICONS = {
+  "wyntrio-solutions": Globe,
+  "student-portal": GraduationCap,
+  bgv: ShieldCheck,
+  "employee-mgmt": Users,
+  assessment: ClipboardCheck,
+  "cabin-booking": CalendarCheck,
+  spanora: Search,
+};
 
 // Stock imagery for the card faces (cycled across projects by index).
 const PROJECT_IMAGES = [
@@ -89,6 +109,7 @@ export function LandingWork() {
 }
 
 function DealCard({ project, index, total, p, image }) {
+  const Icon = PROJECT_ICONS[project.id] || Globe;
   const last = index === total - 1;
   const a = index / total; // deal-off start
   const b = (index + 1) / total; // deal-off end
@@ -139,7 +160,7 @@ function DealCard({ project, index, total, p, image }) {
     >
       <motion.article
         style={{ x, y, rotateZ, scale, opacity }}
-        className="w-[clamp(280px,58vw,430px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
+        className="group w-[clamp(280px,58vw,430px)] overflow-hidden rounded-2xl border border-line/10 bg-bg-soft shadow-glass"
         data-cursor-label="View"
       >
         <div className="relative aspect-[16/9] overflow-hidden">
@@ -147,15 +168,25 @@ function DealCard({ project, index, total, p, image }) {
             src={image}
             alt={project.title}
             draggable={false}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
           />
+          {/* accent tint */}
           <div
             className={cn(
-              "absolute inset-0 bg-gradient-to-tr opacity-40 mix-blend-multiply",
+              "absolute inset-0 bg-gradient-to-tr opacity-35 mix-blend-multiply",
               project.accent,
             )}
           />
-          <div className="absolute inset-0 bg-black/15" />
+          {/* moody overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/45" />
+
+          {/* centred icon */}
+          <div className="absolute inset-0 grid place-items-center">
+            <span className="grid place-items-center size-14 md:size-16 rounded-full border border-white/25 bg-white/10 backdrop-blur-md text-white shadow-[0_8px_28px_-8px_rgba(0,0,0,0.7)] transition-transform duration-500 group-hover:scale-110">
+              <Icon className="size-6 md:size-7" />
+            </span>
+          </div>
+
           <span className="absolute top-4 left-5 font-mono text-[11px] uppercase tracking-[0.3em] text-white/90">
             {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
