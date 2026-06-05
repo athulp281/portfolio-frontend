@@ -7,7 +7,17 @@ import {
   useTransform,
   cubicBezier,
 } from "framer-motion";
-import { ArrowUpRight, ArrowDown, Layers, Cpu, Server } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDown,
+  Server,
+  Database,
+  Network,
+  TrendingUp,
+  Workflow,
+  Zap,
+} from "lucide-react";
+import { SiOpenai, SiClaude, SiGooglegemini } from "react-icons/si";
 import { Magnetic } from "@/components/common/Magnetic";
 import { Marquee } from "@/components/common/Marquee";
 import { useBootStore } from "@/store";
@@ -44,29 +54,30 @@ const CHIPS = [
 const HERO_IMAGE = "/profile2.jpeg";
 
 // Back-face content per panel (revealed after the flip). Center is highlighted.
+// Each card shows a row of icons + title + description.
 const CARDS = [
   {
-    icon: Layers,
-    title: "Frontend",
-    desc: "Design-led React & Next.js interfaces with motion built in.",
+    title: "Next-Gen Development & AI-Augmented Coding",
+    desc: "Building with frontier LLMs — OpenAI, Claude and Gemini — wired into real workflows.",
+    icons: [SiOpenai, SiClaude, SiGooglegemini],
     tone: "dark",
     fan: -12,
     rotEnd: -9, // final tilt on the rainbow arc
     yEnd: 6, // final drop (vh) — sides sit lower than the centre
   },
   {
-    icon: Cpu,
-    title: "AI & Systems",
-    desc: "RAG pipelines and OpenAI wired into real product flows.",
+    title: "Scalable Architecture & Production Systems",
+    desc: "Typed APIs, data layers and infrastructure that scale reliably in production.",
+    icons: [Server, Database, Network],
     tone: "light",
     fan: 0,
     rotEnd: 0,
     yEnd: -3, // centre sits highest (top of the arc)
   },
   {
-    icon: Server,
-    title: "Backend",
-    desc: "Typed APIs, auth, RBAC and real-time services.",
+    title: "Business Impact & Automation",
+    desc: "Turning manual workflows into automated, measurable business outcomes.",
+    icons: [TrendingUp, Workflow, Zap],
     tone: "dark",
     fan: 12,
     rotEnd: 9,
@@ -345,20 +356,16 @@ function SplitCard({ card, index, p, go, dims }) {
           }}
         >
           <div
-            className="grid place-items-center size-8 md:size-12 rounded-lg md:rounded-xl"
-            style={{
-              background:
-                card.tone === "light" ? "rgba(5,6,10,0.06)" : "rgba(255,255,255,0.05)",
-            }}
+            className="flex items-center gap-2.5 md:gap-3.5"
+            style={{ color: card.tone === "light" ? "#05060a" : "#22d3ee" }}
           >
-            <card.icon
-              className="size-4 md:size-5"
-              style={{ color: card.tone === "light" ? "#05060a" : "#22d3ee" }}
-            />
+            {card.icons.map((Ic, k) => (
+              <Ic key={k} className="size-5 md:size-7" />
+            ))}
           </div>
           <div>
             <h3
-              className="font-display font-semibold text-sm md:text-2xl leading-tight tracking-[-0.02em]"
+              className="font-display font-semibold text-[13px] md:text-xl leading-tight tracking-[-0.02em]"
               style={{ color: card.tone === "light" ? "#05060a" : "#e6e9f2" }}
             >
               {card.title}
