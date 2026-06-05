@@ -39,6 +39,7 @@ const FEATURED_PROJECTS = [
     stack: ["Next.js", "Redux Toolkit", "Sequelize", "MySQL"],
     accent: "from-neon-violet to-neon-pink",
     image: "/projectimages/backgroundverification.png",
+    link: "https://verify.teaminterval.net/loginnew",
   },
   {
     id: "employee-mgmt",
@@ -68,6 +69,7 @@ const FEATURED_PROJECTS = [
     stack: ["React", "MUI", "Sequelize", "MySQL"],
     accent: "from-neon-cyan to-neon-lime",
     image: "/projectimages/cabinbooking.png",
+    link: "https://portal.teaminterval.net/",
   },
   {
     id: "spanora",
