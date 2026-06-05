@@ -37,10 +37,12 @@ export function LandingWork() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+  // Heavily-damped spring → consistent smooth deal whether scrolling fast or
+  // slow (velocity spikes are absorbed by the extra mass + damping).
   const p = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.5,
+    stiffness: 70,
+    damping: 34,
+    mass: 0.9,
   });
 
   return (

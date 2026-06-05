@@ -124,16 +124,18 @@ function HeroStage() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  // Softer spring → the scroll-driven transforms glide instead of snapping.
+  // Heavily-damped spring → consistent, smooth glide regardless of how fast
+  // or slow you scroll (more mass + damping absorbs velocity spikes).
   const p = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.6,
+    stiffness: 70,
+    damping: 34,
+    mass: 0.9,
   });
 
-  // Phase 0 — the big card starts low (peeking from the bottom) while the
-  // marquee + intro fill the screen, then rises to centre as you scroll.
-  const cardsY = useTransform(p, [0, 0.2], ["32vh", "0vh"]);
+  // Phase 0 — the big card starts lower (peeking) while the marquee + intro
+  // fill the screen, then rises to centre. On mobile it starts a bit higher
+  // (closer to centre) so it reads better on first view.
+  const cardsY = useTransform(p, [0, 0.2], [dims.small ? "16vh" : "32vh", "0vh"]);
   const topOpacity = useTransform(p, [0.08, 0.24], [1, 0]);
   const topY = useTransform(p, [0, 0.24], ["0vh", "-5vh"]);
   const nameOpacity = useTransform(p, [0.32, 0.54], [0, 1]);
