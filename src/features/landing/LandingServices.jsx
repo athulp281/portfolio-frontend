@@ -122,7 +122,7 @@ export function LandingServices() {
             the single-column mobile layout. Heights are svh-bounded to fit. */}
         <div className="md:col-span-5 self-start sticky top-16 md:top-24 z-10 bg-bg md:bg-transparent pt-3 pb-5 md:py-0 border-b border-line/10 md:border-0">
             <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-6">
-              (02) — Capabilities
+              (03) — Capabilities
             </Reveal>
 
             {/* Keyed remount = quick fade-in on change, with NO exit-wait

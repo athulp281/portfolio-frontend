@@ -7,3 +7,4 @@ export { useThemeStore } from "./useThemeStore";
 export { useAdminStore } from "./useAdminStore";
 export { useSelectedWorkStore } from "./useSelectedWorkStore";
 export { useCapabilityStore } from "./useCapabilityStore";
+export { useExperienceStore } from "./useExperienceStore";

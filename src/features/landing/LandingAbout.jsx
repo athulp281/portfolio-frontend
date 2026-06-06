@@ -47,7 +47,7 @@ export function LandingAbout() {
 
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
         <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-10">
-          (01) — About
+          (02) — About
         </Reveal>
 
         <h2 className="font-display font-semibold tracking-[-0.03em] leading-[1.02] text-[clamp(2rem,6vw,5rem)] max-w-5xl">

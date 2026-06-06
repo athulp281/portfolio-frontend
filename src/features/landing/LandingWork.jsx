@@ -60,7 +60,7 @@ export function LandingWork() {
         <div className="mx-auto w-full max-w-7xl px-6 md:px-10 pt-20 md:pt-24 flex items-end justify-between gap-6">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute">
-              (03) — Selected work
+              (04) — Selected work
             </div>
             <h2 className="mt-3 font-display font-semibold tracking-[-0.03em] leading-[0.95] text-ink text-[clamp(1.75rem,5vw,3.5rem)]">
               Things I've shipped

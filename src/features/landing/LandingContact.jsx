@@ -24,7 +24,7 @@ export function LandingContact() {
       <SectionBackdrop src="/profile1.png" position="center" opacity={0.2} />
       <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
         <Reveal className="font-mono text-[11px] uppercase tracking-[0.4em] text-ink-mute mb-10">
-          (04) — Contact
+          (05) — Contact
         </Reveal>
 
         <h2 className="font-display font-semibold tracking-[-0.03em] leading-[0.95] text-[clamp(3rem,13vw,11rem)] text-ink">

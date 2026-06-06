@@ -50,8 +50,9 @@ const HEADER_OFFSET = 88;
 // The landing sections are now normal-flow (no pinned stages), so every
 // anchor just snaps the section top under the fixed header — targetProgress 0.
 const NAV_LINKS = [
-  { href: "#hero",    label: "Home",    targetProgress: 0 },
-  { href: "#intro",   label: "About",   targetProgress: 0 },
+  { href: "#hero",       label: "Home",       targetProgress: 0 },
+  { href: "#experience", label: "Experience", targetProgress: 0 },
+  { href: "#intro",      label: "About",      targetProgress: 0 },
   { href: "#skills",  label: "Skills",  targetProgress: 0 },
   { href: "#work",    label: "Work",    targetProgress: 0 },
   { href: "#contact", label: "Contact", targetProgress: 0 },

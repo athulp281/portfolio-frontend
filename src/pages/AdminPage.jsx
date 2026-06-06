@@ -4,6 +4,7 @@ import { AdminGate } from "@/features/admin/AdminGate";
 import { AdminLayout } from "@/features/admin/AdminLayout";
 import { SelectedWorkAdmin } from "@/features/admin/SelectedWorkAdmin";
 import { CapabilitiesAdmin } from "@/features/admin/CapabilitiesAdmin";
+import { ExperienceAdmin } from "@/features/admin/ExperienceAdmin";
 
 /**
  * /admin — JWT-gated dashboard. The sidebar switches the active section; each
@@ -14,6 +15,7 @@ import { CapabilitiesAdmin } from "@/features/admin/CapabilitiesAdmin";
 const PANELS = {
   "selected-work": SelectedWorkAdmin,
   capabilities: CapabilitiesAdmin,
+  experience: ExperienceAdmin,
 };
 
 export default function AdminPage() {
