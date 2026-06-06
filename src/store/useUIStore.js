@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { playNotificationSound } from "@/utils/sound";
 
 let toastId = 0;
 
@@ -10,6 +11,7 @@ export const useUIStore = create((set, get) => ({
   pushToast: ({ kind = "info", title, message, ttl = 4000 }) => {
     const id = ++toastId;
     set({ toasts: [...get().toasts, { id, kind, title, message }] });
+    playNotificationSound(kind);
     if (ttl > 0) {
       setTimeout(() => get().dismissToast(id), ttl);
     }
