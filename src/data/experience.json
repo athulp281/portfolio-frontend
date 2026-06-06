@@ -1,10 +1,9 @@
 [
   {
     "id": "interval",
-    "company": "Interval Edu",
-    "role": "Full-Stack Developer",
-    "logo": "/profile5.png",
-    "start": "2021-06-01",
-    "end": ""
+    "company": "Interval Learning",
+    "role": "Senior Software Engineer",
+    "logo": "/uploads/interval-logo-1-mq2r9cy9.png",
+    "start": "2021-06-01"
   }
 ]
