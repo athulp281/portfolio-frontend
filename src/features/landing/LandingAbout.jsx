@@ -66,87 +66,104 @@ export function LandingAbout() {
           pipelines. Athion AI, the assistant on this site, is one of them.
         </Reveal>
 
-        {/* Stats — each with a unique scroll-driven animation */}
-        <div className="mt-20 md:mt-28 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-14">
-          {STATS.map((s, i) => (
-            <StatItem key={s.label} value={s.value} label={s.label} index={i} />
-          ))}
-        </div>
+        {/* Stats — one seed card that splits into four on scroll. */}
+        <SplitStats />
       </div>
     </section>
   );
 }
 
-const NUMBER_CLS =
-  "font-display font-semibold text-ink tracking-[-0.03em] leading-none text-[clamp(2.5rem,7vw,5rem)]";
-
-function StatItem({ value, label, index }) {
+/**
+ * SplitStats — a sticky-pinned, scroll-driven reveal. It opens as ONE card with
+ * a 2×2 grid icon at its centre; as you scroll the icon fades and the card
+ * SPLITS into the four stat cards, which fan out from the centre to their row
+ * positions and reveal their value + label. The whole sequence plays out (and
+ * then HOLDS, fully revealed) while the stage stays pinned on screen.
+ */
+function SplitStats() {
   const ref = useRef(null);
+  // Tall scroll track; the stage inside is sticky-pinned to the viewport so the
+  // entire split animation happens in view. Progress runs 0→1 across the track.
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 92%", "start 42%"],
+    offset: ["start start", "end end"],
   });
-  // Smooth, consistent regardless of scroll speed.
-  const p = useSpring(scrollYProgress, { stiffness: 60, damping: 26, mass: 1 });
+  // Soft spring = smooth + slow, independent of scroll speed.
+  const p = useSpring(scrollYProgress, { stiffness: 32, damping: 30, mass: 1.3 });
 
-  const opacity = useTransform(p, [0, 0.55], [0, 1]);
-  // 0 — clip wipe
-  const clipPath = useTransform(p, [0, 1], ["inset(0 100% 0 0)", "inset(0 0% 0 0)"]);
-  const x = useTransform(p, [0, 1], [-26, 0]);
-  // 1 — flip up
-  const rotateX = useTransform(p, [0, 1], [88, 0]);
-  const y = useTransform(p, [0, 1], [44, 0]);
-  // 2 — zoom + de-blur
-  const scale = useTransform(p, [0, 1], [0.45, 1]);
-  const blur = useTransform(p, [0, 1], ["blur(18px)", "blur(0px)"]);
-  // 3 — masked rise + letter-spacing
-  const innerY = useTransform(p, [0, 1], ["115%", "0%"]);
-  const letterSpacing = useTransform(p, [0, 1], ["0.22em", "0em"]);
-
-  let number;
-  if (index === 0) {
-    number = (
-      <motion.div style={{ clipPath, x, opacity }} className={NUMBER_CLS}>
-        {value}
-      </motion.div>
-    );
-  } else if (index === 1) {
-    number = (
-      <motion.div
-        style={{ rotateX, y, opacity, transformPerspective: 700, transformOrigin: "bottom" }}
-        className={NUMBER_CLS}
-      >
-        {value}
-      </motion.div>
-    );
-  } else if (index === 2) {
-    number = (
-      <motion.div style={{ scale, filter: blur, opacity }} className={NUMBER_CLS}>
-        {value}
-      </motion.div>
-    );
-  } else {
-    number = (
-      <span className="block overflow-hidden pb-[0.1em]">
-        <motion.span
-          style={{ y: innerY, letterSpacing, opacity }}
-          className={`block ${NUMBER_CLS}`}
-        >
-          {value}
-        </motion.span>
-      </span>
-    );
-  }
+  // The seed (icon) card: visible while the cards are stacked, fades as they split.
+  const seedOpacity = useTransform(p, [0.1, 0.3], [1, 0]);
+  const seedScale = useTransform(p, [0.1, 0.34], [1, 1.25]);
+  const iconRotate = useTransform(p, [0, 0.34], [0, 35]);
 
   return (
-    <div ref={ref} className="border-t border-line/12 pt-5">
-      {number}
-      <motion.div
-        style={{ opacity }}
-        className="mt-3 font-mono text-[10px] md:text-xs uppercase tracking-[0.22em] text-ink-mute"
-      >
-        {label}
-      </motion.div>
+    <div ref={ref} className="relative h-[200vh]">
+      {/* Sticky stage — stays centred on screen for the whole animation. */}
+      <div className="sticky top-0 flex h-screen items-center justify-center">
+        <div className="relative w-full">
+          {/* The four stat cards (fan out from centre). */}
+          <div className="flex justify-center gap-3 md:gap-6">
+            {STATS.map((s, i) => (
+              <StatCard key={s.label} stat={s} index={i} p={p} />
+            ))}
+          </div>
+
+          {/* Seed icon card — overlaid dead-centre, fades as the split begins. */}
+          <motion.div
+            style={{ opacity: seedOpacity, scale: seedScale }}
+            className="pointer-events-none absolute inset-0 grid place-items-center"
+          >
+            <div className="grid h-[200px] w-[clamp(8rem,40vw,15rem)] place-items-center rounded-3xl border border-line/10 bg-bg-soft shadow-glass md:h-[260px]">
+              <motion.svg
+                style={{ rotate: iconRotate }}
+                viewBox="0 0 24 24"
+                fill="none"
+                className="size-16 md:size-20 text-ink"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor" opacity="0.9" />
+                <rect x="14" y="3" width="7" height="7" rx="2" fill="currentColor" opacity="0.55" />
+                <rect x="3" y="14" width="7" height="7" rx="2" fill="currentColor" opacity="0.55" />
+                <rect x="14" y="14" width="7" height="7" rx="2" fill="currentColor" opacity="0.9" />
+              </motion.svg>
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </div>
+  );
+}
+
+const STAT_VALUE_CLS =
+  "font-display font-semibold text-ink tracking-[-0.03em] leading-none text-[clamp(1.6rem,4.5vw,3.25rem)]";
+
+function StatCard({ stat, index, p }) {
+  // Each card starts stacked at the centre (translated by -(i-1.5) widths) and
+  // slides to its natural row slot (x → 0). A small per-card stagger makes the
+  // split fan out rather than snap as one block.
+  const t0 = 0.18 + index * 0.03;
+  const collapsed = `${-(index - 1.5) * 112}%`;
+  const x = useTransform(p, [t0, t0 + 0.34], [collapsed, "0%"]);
+  const cardOpacity = useTransform(p, [t0, t0 + 0.12], [0, 1]);
+
+  // Content reveals once the cards have spread apart, then holds.
+  const c0 = 0.46 + index * 0.03;
+  const contentOpacity = useTransform(p, [c0, c0 + 0.16], [0, 1]);
+  const contentY = useTransform(p, [c0, c0 + 0.16], [18, 0]);
+
+  return (
+    <motion.div
+      style={{ x, opacity: cardOpacity }}
+      className="flex h-[200px] w-[clamp(5rem,20vw,15rem)] flex-col items-center justify-center gap-3 rounded-3xl border border-line/10 bg-bg-soft px-3 text-center shadow-glass md:h-[260px]"
+    >
+      <motion.div style={{ opacity: contentOpacity, y: contentY }} className={STAT_VALUE_CLS}>
+        {stat.value}
+      </motion.div>
+      <motion.div
+        style={{ opacity: contentOpacity, y: contentY }}
+        className="font-mono text-[9px] md:text-xs uppercase tracking-[0.22em] text-ink-mute"
+      >
+        {stat.label}
+      </motion.div>
+    </motion.div>
   );
 }
