@@ -100,8 +100,11 @@ function ExperienceCard({ item, index }) {
 
   return (
     <div ref={ref} className="relative h-[220vh]">
-      {/* Sticky-pinned stage: stays centred on screen while progress scrubs. */}
-      <div className="sticky top-0 flex h-screen items-center justify-center">
+      {/* Sticky-pinned stage: stays centred on screen while progress scrubs.
+          overflow-x-hidden clips the badges as they slide in from ±130% so they
+          don't push the page wide on mobile. Keep overflow OFF every ancestor of
+          this element — overflow on a sticky ancestor breaks the pinning. */}
+      <div className="sticky top-0 flex h-screen items-center justify-center overflow-x-hidden">
         <div className="relative h-[340px] md:h-[400px] w-full [perspective:1600px]">
           {/* ── The landscape card that the badges merge into ──────────── */}
           <motion.div
